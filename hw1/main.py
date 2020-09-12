@@ -38,9 +38,10 @@ class Robot:
                     direction_right, motor_right_speed
                 )
             )
+        time.sleep(0.05)
 
     def stop(self):
-        self.move(0, 0)
+        self.driver.motor_stop(self.driver.ALL)
 
 
 def main():
@@ -48,23 +49,26 @@ def main():
     controller = xbox_one()
 
     def leftWheel(value):
-        robot.move(motor_left_speed=value)
+        robot.move(motor_left_speed=value*100)
 
     def rightWheel(value):
-        robot.move(motor_right_speed=value)
+        robot.move(motor_right_speed=value*100)
 
-    def stopRobot():
+    def stopRobot(value):
         robot.stop()
 
     controller.setupControlCallback(controller.ctrls.LTHUMBX, leftWheel)
     controller.setupControlCallback(controller.ctrls.LTHUMBY, rightWheel)
     controller.setupControlCallback(controller.ctrls.X, stopRobot)
 
-    while True:
-        try:
+    try:
+        while True:
             time.sleep(5)
-        except KeyboardInterrupt:
-            robot.stop()
+    except KeyboardInterrupt:
+        print("Closing program...")
+    finally:
+        robot.stop()
+        controller.stop()
 
 
 if __name__ == "__main__":
