@@ -17,7 +17,10 @@ class Robot:
 
     def move(self, motor_left_speed=None, motor_right_speed=None):
         if motor_left_speed is not None:
-            direction_left = self.driver.CW if motor_left_speed > 0 else self.driver.CCW
+            direction_left = self.driver.CW
+            if motor_left_speed < 0:
+                direction_left = self.driver.CCW
+                motor_left_speed *= -1
             self.driver.motor_movement(
                 [self.driver.M1], direction_left, motor_left_speed
             )
@@ -27,6 +30,10 @@ class Robot:
                 )
             )
         if motor_right_speed is not None:
+            direction_right = self.driver.CW
+            if motor_right_speed < 0:
+                direction_right = self.driver.CCW
+                motor_right_speed *= -1
             direction_right = (
                 self.driver.CW if motor_right_speed > 0 else self.driver.CCW
             )
@@ -38,7 +45,7 @@ class Robot:
                     direction_right, motor_right_speed
                 )
             )
-        time.sleep(0.05)
+        time.sleep(0.01)
 
     def stop(self):
         self.driver.motor_stop(self.driver.ALL)
@@ -57,8 +64,8 @@ def main():
     def stopRobot(value):
         robot.stop()
 
-    controller.setupControlCallback(controller.ctrls.LTHUMBX, leftWheel)
-    controller.setupControlCallback(controller.ctrls.LTHUMBY, rightWheel)
+    controller.setupControlCallback(controller.ctrls.LTHUMBY, leftWheel)
+    controller.setupControlCallback(controller.ctrls.RTHUMBY, rightWheel)
     controller.setupControlCallback(controller.ctrls.X, stopRobot)
 
     try:
