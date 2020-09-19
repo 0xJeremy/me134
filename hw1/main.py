@@ -1,48 +1,40 @@
 import time
-from xbox_one import xbox_one
+# from xbox_one import xbox_one
+from xbox_controller import XboxController
 from motor_driver import DFRobot_DC_Motor_IIC
+
+# 192.168.0.233
 
 BUS = 1
 ADDRESS = 0x10
 
-# def board_detect():
-#   l = DFRobot_DC_Motor_IIC.detecte()
-#   print("Board list conform:")
-#   print(l)
-
-
 class Robot:
     def __init__(self):
         self.driver = DFRobot_DC_Motor_IIC(BUS, ADDRESS)
+        self.driver.set_encoder_enable(self.driver.ALL)
+        self.driver.set_moter_pwm_frequency(1000)
+
+    def _move(self, motor, speed):
+        direction = self.driver.CW
+        if speed < 0:
+            direction = self.driver.CCW
+            speed *= -1
+        self.driver.motor_movement([motor], direction, speed)
+        return direction, speed
 
     def move(self, motor_left_speed=None, motor_right_speed=None):
         if motor_left_speed is not None:
-            direction_left = self.driver.CW
-            if motor_left_speed < 0:
-                direction_left = self.driver.CCW
-                motor_left_speed *= -1
-            self.driver.motor_movement(
-                [self.driver.M1], direction_left, motor_left_speed
-            )
+            direction, speed = self._move(self.driver.M1, motor_left_speed)
             print(
                 "Setting left motor to {} with power {}".format(
-                    direction_left, motor_left_speed
+                    direction, speed
                 )
             )
         if motor_right_speed is not None:
-            direction_right = self.driver.CW
-            if motor_right_speed < 0:
-                direction_right = self.driver.CCW
-                motor_right_speed *= -1
-            direction_right = (
-                self.driver.CW if motor_right_speed > 0 else self.driver.CCW
-            )
-            self.driver.motor_movement(
-                [self.driver.M2], direction_right, motor_right_speed
-            )
+            direction, speed = self._move(self.driver.M2, motor_right_speed*-1)
             print(
                 "Setting right motor to {} with power {}".format(
-                    direction_right, motor_right_speed
+                    direction, speed
                 )
             )
         time.sleep(0.01)
@@ -53,7 +45,7 @@ class Robot:
 
 def main():
     robot = Robot()
-    controller = xbox_one()
+    controller = XboxController()
 
     def leftWheel(value):
         robot.move(motor_left_speed=value*100)
@@ -64,10 +56,11 @@ def main():
     def stopRobot(value):
         robot.stop()
 
-    controller.setupControlCallback(controller.ctrls.LTHUMBY, leftWheel)
-    controller.setupControlCallback(controller.ctrls.RTHUMBY, rightWheel)
-    controller.setupControlCallback(controller.ctrls.X, stopRobot)
+    controller.setupControlCallback(controller.XboxControls.LTHUMBY, leftWheel)
+    controller.setupControlCallback(controller.XboxControls.RTHUMBY, rightWheel)
+    controller.setupControlCallback(controller.XboxControls.X, stopRobot)
 
+    controller.start()
     try:
         while True:
             time.sleep(5)
