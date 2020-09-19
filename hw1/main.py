@@ -1,4 +1,5 @@
 import time
+
 # from xbox_one import xbox_one
 from xbox_controller import XboxController
 from motor_driver import DFRobot_DC_Motor_IIC
@@ -7,6 +8,7 @@ from motor_driver import DFRobot_DC_Motor_IIC
 
 BUS = 1
 ADDRESS = 0x10
+
 
 class Robot:
     def __init__(self):
@@ -25,18 +27,10 @@ class Robot:
     def move(self, motor_left_speed=None, motor_right_speed=None):
         if motor_left_speed is not None:
             direction, speed = self._move(self.driver.M1, motor_left_speed)
-            print(
-                "Setting left motor to {} with power {}".format(
-                    direction, speed
-                )
-            )
+            print("Setting left motor to {} with power {}".format(direction, speed))
         if motor_right_speed is not None:
-            direction, speed = self._move(self.driver.M2, motor_right_speed*-1)
-            print(
-                "Setting right motor to {} with power {}".format(
-                    direction, speed
-                )
-            )
+            direction, speed = self._move(self.driver.M2, motor_right_speed * -1)
+            print("Setting right motor to {} with power {}".format(direction, speed))
         time.sleep(0.01)
 
     def stop(self):
@@ -48,10 +42,10 @@ def main():
     controller = XboxController()
 
     def leftWheel(value):
-        robot.move(motor_left_speed=value*100)
+        robot.move(motor_left_speed=value * 100)
 
     def rightWheel(value):
-        robot.move(motor_right_speed=value*100)
+        robot.move(motor_right_speed=value * 100)
 
     def stopRobot(value):
         robot.stop()
