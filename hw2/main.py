@@ -9,7 +9,6 @@ def init():
     clock = Clock()
     time_binary_array = tc.get_binary_array()
     clock.set(time_binary_array)
-    clock = 1
 
     return clock, time_binary_array
 
