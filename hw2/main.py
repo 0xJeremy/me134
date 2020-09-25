@@ -1,7 +1,7 @@
 # 172.20.10.2 on iPhone
 
 from clock import Clock
-import time_conversion as tc
+import converter as tc
 import numpy as np
 import time
 
@@ -31,7 +31,7 @@ def main():
         print("Done.")
 
 # Loop through every value the clock can display
-def demonstrate(period=3):
+def demonstrate(period=0.75):
     clock, _ = init()
 
     # Main loop
