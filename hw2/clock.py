@@ -18,7 +18,6 @@ MAP = {
     11: (110, 0),
     12: (10, 100),
     13: (0, 120),
-
     # Minutes (tens)
     14: (20, 120),
     15: (0, 130),
@@ -34,8 +33,9 @@ MAP = {
     24: (140, 10),
     25: (130, 0),
     26: (130, 10),
-    27: (10, 130)
+    27: (10, 130),
 }
+
 
 class Digit:
     def __init__(self, driver, offset):
@@ -46,7 +46,10 @@ class Digit:
         for i, segmentState in enumerate(binaryArray):
             offset = self.offset + i
             segment = MAP[offset]
-            self.driver.servo[offset % 14].angle = segment[0] if segmentState else segment[1]
+            self.driver.servo[offset % 14].angle = (
+                segment[0] if segmentState else segment[1]
+            )
+
 
 class Clock:
     def __init__(self):

@@ -5,12 +5,14 @@ import converter as tc
 import numpy as np
 import time
 
+
 def init():
     clock = Clock()
     time_binary_array = tc.get_binary_array()
     clock.set(time_binary_array)
 
     return clock, time_binary_array
+
 
 def main():
     clock, previous_binary_array = init()
@@ -19,7 +21,7 @@ def main():
     try:
         while True:
             time_binary_array = tc.get_binary_array()
-            if (np.array_equal(previous_binary_array, time_binary_array)):
+            if np.array_equal(previous_binary_array, time_binary_array):
                 pass
             else:
                 clock.set(time_binary_array)
@@ -30,6 +32,7 @@ def main():
     finally:
         print("Done.")
 
+
 # Loop through every value the clock can display
 def demonstrate(period=0.75):
     clock, _ = init()
@@ -39,7 +42,7 @@ def demonstrate(period=0.75):
         # loop through all possible combinations with *period* pause between changes
         for hour in range(24):
             for minute in range(60):
-                binary_array = tc.time_to_binary_arrays(hour,minute)
+                binary_array = tc.time_to_binary_arrays(hour, minute)
                 print(tc.time_to_string(hour, minute))
                 print(binary_array)
                 clock.set(binary_array)
@@ -52,4 +55,4 @@ def demonstrate(period=0.75):
 
 if __name__ == "__main__":
     # main()
-    demonstrate() 
+    demonstrate()
