@@ -1,24 +1,54 @@
-import argparse
+# from robot import Robot
 from pather import Pather
-from robot import Robot
+from motion_planner import MotionPlanner
 
-HOP_HEIGHT = 50
+RAISE = 'RAISE\n'
 
-def main(args):
-	planner = Pather(args.filename)
-	robot = Robot()
+def saveToFile(input, output):
+    all_xs, all_ys = Pather(input).getPaths()
+    planner = MotionPlanner()
 
-	all_xs, all_ys = planner.getPaths()
-	lastPoint = None
+    file = open(output, 'w')
 
-	for xs, ys in zip(all_xs, all_ys):
-		for x, y in tqdm(zip(xs, ys), total=len(xs)):
-			robot.goto(x, y)
-			lastPoint = (x, y)
-		robot.goto(lastPoint[0], lastPoint[1], HOP_HEIGHT)
+    for xs, ys in zip(all_xs, all_ys):
+        path_x, path_y = planner.createMachinePath(xs, ys)
 
+        for x, y in zip(path_x, path_y):
+            angles = planner.getAngles(x, y)
+            file.write('{} {} {}\n'.format(angles[0], angles[1], angles[2]))
+        file.write(RAISE)
+
+    file.close()
+
+def parseFile(file):
+    file = open(file, 'r')
+    tmp_angles = []
+    all_angles = []
+    for line in file:
+        if line == RAISE:
+            all_angles.append(tmp_angles)
+            tmp_angles = []
+            continue
+        text = line.split(' ')
+        angles = [float(angle) for angle in text]
+        tmp_angles.append(angles)
+
+    # Returns a 3D Array. All Paths -> Single Path -> Angles at a Point
+    return all_angles
+
+
+def drawFromFile(file):
+
+    file = open(file, 'r')
+    # robot = Robot()
+    for line in f:
+        text = line.split(' ')
+        angles = [float(angle) for angle in text]
+        print(angles)
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description='A writing robot.')
-	parser.add_argument('-f', '--filename', help='Loads and writes from a .svg file')
-	args = parser.parse_args()
+    output = 'out.pos'
+    saveToFile('svg_samples/sample.svg', output)
+    parseFile(output)
+    # drawFromFile('out.pos')
+    # drawLive('svg_samples/sample.svg')

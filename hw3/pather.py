@@ -92,7 +92,7 @@ if __name__ == "__main__":
     all_xs, all_ys = Pather("svg_samples/sample.svg").getPaths()
 
     for xs, ys in zip(all_xs, all_ys):
-        # plt.scatter(xs, ys)
+        plt.scatter(xs, ys)
         plt.plot(xs, ys)
     plt.gca().invert_yaxis()
     plt.show()
