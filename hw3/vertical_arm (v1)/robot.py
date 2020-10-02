@@ -24,7 +24,7 @@ class Robot:
         setupServos(self.kit)
 
     def goto(self, angle1, angle2, angle3, angle4=0):
-        self.kit.servo[0].angle = angle1
-        self.kit.servo[1].angle = angle2
-        self.kit.servo[2].angle = angle3
-        self.kit.servo[3].angle = angle4
+        self.kit.servo[0].angle = angle1 + RANGES[0][0]
+        self.kit.servo[1].angle = angle2 + RANGES[1][0]
+        self.kit.servo[2].angle = angle3 + RANGES[2][0]
+        self.kit.servo[3].angle = angle4 + RANGES[3][0]

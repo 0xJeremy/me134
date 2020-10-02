@@ -16,8 +16,17 @@ def cubicBezier(t, p):
         + (t ** 3 * p[3])
     )
 
+def fill(start, end, step):
+    points = []
+    while start < end:
+        points.append(start)
+        start += step
+    print(points)
+    return points
 
-NUM_POINTS = 10
+
+NUM_POINTS = 6
+LINE_STEP = 5
 
 
 class Pather:
@@ -46,7 +55,16 @@ class Pather:
             for item in path:
                 self.parseSVG(item)
         elif isinstance(path, Line):
-            self.append([path.start, path.end])
+            if path.start.real != path.end.real:
+                xs = np.linspace(path.start.real, path.end.real, LINE_STEP)
+            else:
+                xs = [path.start.real, path.end.real]
+            if path.start.imag != path.end.imag:
+                ys = np.linspace(path.start.imag, path.end.imag, LINE_STEP)
+            else:
+                ys = [path.start.imag, path.end.imag]
+            for x, y in zip(xs, ys):
+                self.append(complex(x, y))
         elif isinstance(path, QuadraticBezier):
             for point in np.linspace(0, 1, NUM_POINTS):
                 interpolated_x = quadraticBezier(
