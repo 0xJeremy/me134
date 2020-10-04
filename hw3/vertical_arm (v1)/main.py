@@ -1,3 +1,5 @@
+# 172.20.10.2 on iPhone
+
 # from robot import Robot
 from pather import Pather
 from motion_planner import MotionPlanner
@@ -11,19 +13,22 @@ def saveToFile(input, output):
     planner = MotionPlanner()
 
     file = open(output, 'w')
+    offset = 0
 
     for xs, ys in zip(all_xs, all_ys):
         path_x, path_y = planner.createMachinePath(xs, ys)
 
-        startingPosition = planner.getAngles(xs[0], ys[0], HOP_HEIGHT)
+        startingPosition = planner.getAngles(xs[0], ys[0]+offset, HOP_HEIGHT)
         file.write('{} {} {}\n'.format(startingPosition[0], startingPosition[1], startingPosition[2]))
 
         for x, y in zip(path_x, path_y):
-            angles = planner.getAngles(x, y)
+            angles = planner.getAngles(x, y+offset)
             file.write('{} {} {}\n'.format(angles[0], angles[1], angles[2]))
 
-        endingPosition = planner.getAngles(xs[0], ys[0], HOP_HEIGHT)
+        endingPosition = planner.getAngles(xs[0], ys[0]+offset, HOP_HEIGHT)
         file.write('{} {} {}\n'.format(endingPosition[0], endingPosition[1], endingPosition[2]))
+
+        offset += 0.5
 
     file.close()
 

@@ -45,8 +45,10 @@ class MotionPlanner:
     def __init__(self):
         self.min_x = 0.3
         self.min_y = 0.3
-        self.max_x = 2.1
-        self.max_y = 2.1
+        # self.max_x = 2.1
+        # self.max_y = 2.1
+        self.max_x = 1.3
+        self.max_y = 1.3
         self.arm = tinyik.Actuator(
             [
                 "z",
