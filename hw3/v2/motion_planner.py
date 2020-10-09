@@ -29,12 +29,20 @@ class Linkage:
 
 class MotionPlanner:
     def __init__(self):
+        # self.links = [
+        #     Linkage(65, 180, [0, 0]), # Driver A
+        #     Linkage(85, 90, [0, 0]), # Driver B
+        #     Linkage(85, 90, [-65,0]), # Link A to lever arm
+        #     Linkage(65, 0, [-65,85]), # First section of lever arm
+        #     Linkage(90, 0, [0,85]), # End effector of lever arm
+        # ]
+
         self.links = [
-            Linkage(65, 180, [0, 0]), # Driver A
-            Linkage(85, 90, [0, 0]), # Driver B
-            Linkage(85, 90, [-65,0]), # Link A to lever arm
-            Linkage(65, 0, [-65,85]), # First section of lever arm
-            Linkage(90, 0, [0,85]), # End effector of lever arm
+            Linkage(46, 180, [0, 0]), # Driver A
+            Linkage(60, 64, [0, 0]), # Driver B
+            Linkage(60, 64, [-46,0]), # Link A to lever arm
+            Linkage(46, 0, [-46,60]), # First section of lever arm
+            Linkage(64, 0, [0,60]), # End effector of lever arm
         ]
 
         self.theta0 = sym.Symbol('theta0', real=True)

@@ -1,5 +1,6 @@
 from svgpathtools import svg2paths, Path, Line, CubicBezier, Arc, QuadraticBezier
 import numpy as np
+import math
 
 
 # https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Quadratic_B%C3%A9zier_curves
@@ -16,17 +17,27 @@ def cubicBezier(t, p):
         + (t ** 3 * p[3])
     )
 
+
 def fill(start, end, step):
+    flag = False
+    if start > end:
+        start, end = end, start
+        flag = True
+    if start == end:
+        return [start]*30
     points = []
-    while start < end:
+    while start < end and len(points) < 50:
         points.append(start)
         start += step
     print(points)
+    if flag:
+        points.reverse()
     return points
 
 
-NUM_POINTS = 6
-LINE_STEP = 5
+NUM_POINTS = 3
+LINE_STEP = 10
+STEP = 30
 
 
 class Pather:
@@ -55,14 +66,9 @@ class Pather:
             for item in path:
                 self.parseSVG(item)
         elif isinstance(path, Line):
-            if path.start.real != path.end.real:
-                xs = np.linspace(path.start.real, path.end.real, LINE_STEP)
-            else:
-                xs = [path.start.real, path.end.real]
-            if path.start.imag != path.end.imag:
-                ys = np.linspace(path.start.imag, path.end.imag, LINE_STEP)
-            else:
-                ys = [path.start.imag, path.end.imag]
+            dist = math.sqrt(math.pow(path.start.real - path.end.real, 2) + math.pow(path.start.imag - path.end.imag, 2))
+            xs = np.linspace(path.start.real, path.end.real, round(dist / STEP))
+            ys = np.linspace(path.start.imag, path.end.imag, round(dist / STEP))
             for x, y in zip(xs, ys):
                 self.append(complex(x, y))
         elif isinstance(path, QuadraticBezier):
