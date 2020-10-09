@@ -1,8 +1,6 @@
 import numpy as np
 import math
 import sympy as sym
-import matplotlib.pyplot as plt
-
 
 class Linkage:
     length = 0
@@ -90,14 +88,15 @@ def drive_B(links, delta_angle):
     return resolve_movement(links)
 
 
-def plot_system(links):
-    plt.figure()
-    for link in links:
-        plt.plot([link.origin[0], link.tip()[0]],
-                 [link.origin[1], link.tip()[1]])
-
-
 if __name__ == '__main__':
+
+    import matplotlib.pyplot as plt
+
+    def plot_system(links):
+        plt.figure()
+        for link in links:
+            plt.plot([link.origin[0], link.tip()[0]],
+                     [link.origin[1], link.tip()[1]])
     links = [
         Linkage(65, 180, [0, 0]), # Driver A
         Linkage(85, 90, [0, 0]), # Driver B
@@ -107,7 +106,7 @@ if __name__ == '__main__':
     ]
 
     plot_system(links)
-    print(go_to_point(links, 90, 90))
+    print(go_to_point(links, 120, 90))
     plot_system(links)
     print(go_to_point(links, 90, 95))
     plot_system(links)
