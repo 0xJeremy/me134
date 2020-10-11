@@ -35,7 +35,7 @@ def fill(start, end, step):
     return points
 
 
-NUM_POINTS = 3
+NUM_POINTS = 10
 LINE_STEP = 10
 STEP = 30
 
