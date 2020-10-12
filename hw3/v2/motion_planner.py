@@ -28,22 +28,23 @@ class Linkage:
         return self.length * np.array([math.cos(math.radians(self.angle)), math.sin(math.radians(self.angle))]) + self.origin
 
 class MotionPlanner:
-    def __init__(self):
-        # self.links = [
-        #     Linkage(65, 180, [0, 0]), # Driver A
-        #     Linkage(85, 90, [0, 0]), # Driver B
-        #     Linkage(85, 90, [-65,0]), # Link A to lever arm
-        #     Linkage(65, 0, [-65,85]), # First section of lever arm
-        #     Linkage(90, 0, [0,85]), # End effector of lever arm
-        # ]
-
-        self.links = [
-            Linkage(46, 180, [0, 0]), # Driver A
-            Linkage(60, 64, [0, 0]), # Driver B
-            Linkage(60, 64, [-46,0]), # Link A to lever arm
-            Linkage(46, 0, [-46,60]), # First section of lever arm
-            Linkage(64, 0, [0,60]), # End effector of lever arm
-        ]
+    def __init__(self, arm='short'):
+        if arm is 'short':
+            self.links = [
+                Linkage(46, 180, [0, 0]),  # Driver A
+                Linkage(60, 64, [0, 0]),  # Driver B
+                Linkage(60, 64, [-46, 0]),  # Link A to lever arm
+                Linkage(46, 0, [-46, 60]),  # First section of lever arm
+                Linkage(64, 0, [0, 60]),  # End effector of lever arm
+            ]
+        else:
+            self.links = [
+                Linkage(65, 180, [0, 0]), # Driver A
+                Linkage(85, 90, [0, 0]), # Driver B
+                Linkage(85, 90, [-65,0]), # Link A to lever arm
+                Linkage(65, 0, [-65,85]), # First section of lever arm
+                Linkage(90, 0, [0,85]), # End effector of lever arm
+            ]
 
         self.theta0 = sym.Symbol('theta0', real=True)
         self.theta1 = sym.Symbol('theta1', real=True)

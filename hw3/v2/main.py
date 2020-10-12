@@ -1,10 +1,14 @@
 # 172.20.10.2 on iPhone
 
 import time
+import sys
 
 RAISE = 'RAISE\n'
 HOP_HEIGHT = 0.5
 TRAVEL_TIME = 0.5
+DEFAULT_FILE = 'out.pos'
+DEFAULT_STYLE = 1.2345*3.1415
+
 
 def getMinMax(list2d):
     minVal, maxVal = min(list2d[0]), max(list2d[0])
@@ -15,12 +19,13 @@ def getMinMax(list2d):
 
     return minVal, maxVal
 
-def saveToFile(input, output):
+
+def saveToFile(input, output, arm):
     from pather import Pather
     from motion_planner import MotionPlanner, mapValue
     import matplotlib.pyplot as plt
     all_xs, all_ys = Pather(input).getPaths()
-    planner = MotionPlanner()
+    planner = MotionPlanner(arm)
 
     file = open(output, 'w')
     offset = 0
@@ -34,26 +39,14 @@ def saveToFile(input, output):
     accX = []
     accY = []
 
-    # center: x=85, y=90 (now x=64 y=60)
-
     for path_x, path_y in zip(all_xs, all_ys):
 
         for x, y in zip(path_x, path_y):
-
-            # x -= x_avg
-            # y -= y_avg
-
-            # x = mapValue(x, 0, x_max-x_min, 10, 120)
-            # y = mapValue(y, 0, y_max-y_min, 10, 120)
-
-            # x = mapValue(x, x_min, x_max, 55, 115)
-            # y = mapValue(y, y_min, y_max, 60, 120)
 
             y = y_avg - y
 
             x = mapValue(x, x_min, x_max, 44, 84)
             y = mapValue(y, y_min, y_max, 40, 80)
-
 
             accX.append(x)
             accY.append(y)
@@ -87,9 +80,9 @@ def parseFile(file):
     return all_angles
 
 
-def drawFromFile(file):
+def drawFromFile(file, style_factor=DEFAULT_STYLE):
     from robot import Robot
-    robot = Robot()
+    robot = Robot(style_factor)
 
     all_angles = parseFile(file)
 
@@ -102,9 +95,46 @@ def drawFromFile(file):
         time.sleep(0.5)
 
 
+def readCmdLine(argv):
+    infile = DEFAULT_FILE
+    outfile = DEFAULT_FILE
+    style_factor = DEFAULT_STYLE
+    arm = 'short'
+    draw_live = False
+
+    if len(sys.argv) > 1:
+        if '-h' or '--help' in sys.argv:
+            print('usage: main.py [-h] [-i] input_file [-o] output_file [-s] style_factor [-a] arm [-rl]\n\n'
+                  'Create and/or execute robot path\n\n'
+                  'optional arguments:\n'
+                  '-h, --help\tshow help message and exit\n'
+                  '-i, --infile\tinput .svg or .pos file\n'
+                  '-o, --outfile\toutput .pos file to save to\n'
+                  '-s, --style\tthe desired robot arm style factor\n'
+                  '-a, --arm\tthe arm set-up, \'short\' or \'long\''
+                  '-dl, --draw_live\tcompiles .svg and runs path')
+            sys.exit()
+
+        for arg, val in zip(sys.argv[1::2], sys.argv[2::2]):
+            if arg in ("-i", "--infile"):
+                infile = val
+            elif arg in ("-o", "--outfile"):
+                outfile = val
+            elif arg in ("-s", "--style"):
+                style_factor = val
+
+        draw_live = '-dl' or '--draw_live' in sys.argv
+
+    return [infile, outfile, style_factor, arm, draw_live]
+
+
 if __name__ == '__main__':
-    output = 'out.pos'
-    saveToFile('svg_samples/jk.svg', output)
-    # parseFile(output)
-    # drawFromFile('out.pos')
-    # drawLive('svg_samples/sample.svg')
+    [infile, outfile, style_factor, arm, draw_live] = readCmdLine(sys.argv)
+
+    if '.svg' in infile:
+        saveToFile(infile, outfile, arm)
+        if draw_live:
+            infile = outfile
+
+    if '.pos' in infile:
+        drawFromFile(infile, style_factor)
