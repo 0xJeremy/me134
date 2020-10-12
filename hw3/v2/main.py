@@ -103,16 +103,16 @@ def readCmdLine(argv):
     draw_live = False
 
     if len(sys.argv) > 1:
-        if '-h' or '--help' in sys.argv:
-            print('usage: main.py [-h] [-i] input_file [-o] output_file [-s] style_factor [-a] arm [-rl]\n\n'
+        if "-h" in sys.argv or "--help" in sys.argv:
+            print('usage: main.py [-h] [-i] input_file [-o] output_file [-s] style_factor [-a] arm [-dl]\n\n'
                   'Create and/or execute robot path\n\n'
                   'optional arguments:\n'
                   '-h, --help\tshow help message and exit\n'
                   '-i, --infile\tinput .svg or .pos file\n'
                   '-o, --outfile\toutput .pos file to save to\n'
                   '-s, --style\tthe desired robot arm style factor\n'
-                  '-a, --arm\tthe arm set-up, \'short\' or \'long\''
-                  '-dl, --draw_live\tcompiles .svg and runs path')
+                  '-a, --arm\tthe arm set-up, \'short\' or \'long\'\n'
+                  '-dl, --drawlive\tcompiles .svg and runs path')
             sys.exit()
 
         for arg, val in zip(sys.argv[1::2], sys.argv[2::2]):
@@ -123,7 +123,7 @@ def readCmdLine(argv):
             elif arg in ("-s", "--style"):
                 style_factor = val
 
-        draw_live = '-dl' or '--draw_live' in sys.argv
+        draw_live = "-dl" in sys.argv or "--drawlive" in sys.argv
 
     return [infile, outfile, style_factor, arm, draw_live]
 
@@ -131,10 +131,10 @@ def readCmdLine(argv):
 if __name__ == '__main__':
     [infile, outfile, style_factor, arm, draw_live] = readCmdLine(sys.argv)
 
-    if '.svg' in infile:
+    if ".svg" in infile:
         saveToFile(infile, outfile, arm)
         if draw_live:
             infile = outfile
 
-    if '.pos' in infile:
+    if ".pos" in infile:
         drawFromFile(infile, style_factor)
