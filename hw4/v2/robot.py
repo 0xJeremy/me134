@@ -7,6 +7,7 @@ ADDR_2 = 0x11
 
 MOTOR_RATIO = 20.4
 
+
 class Wheel:
     def __init__(self, driver, id):
         self.driver = driver

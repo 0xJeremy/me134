@@ -6,6 +6,7 @@ from fusion import Fusion
 from scipy.spatial.transform import Rotation
 import board
 import busio
+import numpy as np
 
 # https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/i2c-clock-stretching
 
@@ -23,6 +24,11 @@ def averageTwoVectors(list1, list2, weight1=0.5, weight2=0.5):
     for i1, i2 in zip(list1, list2):
         averages.append((i1 * weight1) + (i2 * weight2))
     return averages
+
+def mpuOrientationToBnoOrientation(axes):
+    # Flips the x and y dimensions, and inverts the new x
+    return (-axes[1], axes[0], axes[2])
+
 
 def timeDiff(start, end):
     return end - start
@@ -43,23 +49,29 @@ class Sensor:
 
     def run(self):
         while not self.stopped:
-            currTime = time()
+            # currTime = time()
 
-            [
-                fusion.update_nomag(mpu.acceleration, mpu.gyro, currTime)
-                for fusion, mpu in zip(self.fusions, self.mpus)
-            ]
-            
-            mpuOrientations = [fusion.q for fusion in self.fusions]
+            # [
+            #     fusion.update_nomag(mpu.acceleration, mpu.gyro, currTime)
+            #     for fusion, mpu in zip(self.fusions, self.mpus)
+            # ]
 
-            mpuOrientation = averageTwoVectors(mpuOrientations[0], mpuOrientations[1])
+            # mpuOrientations = [fusion.q for fusion in self.fusions]
+
+            # mpuOrientation = averageTwoVectors(mpuOrientations[0], mpuOrientations[1])
             bnoOrientation = self.bno.quaternion
 
-            quaternion = averageTwoVectors(
-                bnoOrientation, mpuOrientation, BNO_WEIGHT, MPU_WEIGHT
-            )
+            quaternion = bnoOrientation
 
-            self.euler = Rotation(quaternion).as_rotvec()
+            # quaternion = averageTwoVectors(
+            #     bnoOrientation, mpuOrientation, BNO_WEIGHT, MPU_WEIGHT
+            # )
+
+            try:
+                angles = np.rad2deg(Rotation.from_quat(quaternion).as_rotvec())
+                self.euler = (angles[1], angles[2], angles[0])
+            except ValueError:
+                print("Booting up sensors...")
 
             sleep(SLEEP_TIME)
 
