@@ -16,7 +16,7 @@ MPU_2 = 0x69
 BNO_WEIGHT = 0.5
 MPU_WEIGHT = 1 - BNO_WEIGHT
 
-SLEEP_TIME = 0.05
+SLEEP_TIME = 0.01
 
 
 def averageTwoVectors(list1, list2, weight1=0.5, weight2=0.5):
@@ -24,6 +24,7 @@ def averageTwoVectors(list1, list2, weight1=0.5, weight2=0.5):
     for i1, i2 in zip(list1, list2):
         averages.append((i1 * weight1) + (i2 * weight2))
     return averages
+
 
 def mpuOrientationToBnoOrientation(axes):
     # Flips the x and y dimensions, and inverts the new x
@@ -45,6 +46,9 @@ class Sensor:
 
     def start(self):
         Thread(target=self.run, args=()).start()
+        while self.euler == None:
+            time.sleep(1)
+        print("Initialization Complete!\nSensor Running...")
         return self
 
     def run(self):

@@ -4,40 +4,51 @@ import math
 import time
 from sensor import Sensor
 from robot import Robot
+from pid import PID
 
 
-WEIGHTS = [
-	(-math.sqrt(3)/2, 0.5),
-	(0, -1),
-	(math.sqrt(3)/2, 0.5)
-]
+def boundSpeed(value):
+    if value > 100:
+        return 100
+    if value < -100:
+        return -100
+    return value
 
-MAX_ANGLE = 10 # degrees
-MAX_SPEED = 50
 
-kp = MAX_SPEED / MAX_ANGLE
+WEIGHTS = [(-math.sqrt(3) / 2, 0.5), (0, -1), (math.sqrt(3) / 2, 0.5)]
 
-OFFSETS = []
+# Too small = runs away, too big = jitters
+P = 6
+
+I = 0.0
+
+# Too small = jitters
+D = 0.0
+
+pidX = PID(P, I, D)
+pidY = PID(P, I, D)
 
 sensor = Sensor().start()
 robot = Robot()
 
-while sensor.euler == None:
-	time.sleep(1)
-
 try:
-	while True:
-		angles = sensor.euler
-		
-		speedX = angles[0] * kp
-		speedY = angles[1] * kp
+    while True:
+        angles = sensor.euler
 
-		for i, weight in enumerate(WEIGHTS):
-			motorSpeed = weight[0]*speedX + weight[1]*speedY
-			robot.speed(i, motorSpeed)
+        pidX.update(angles[0])
+        pidY.update(angles[1])
 
-		time.sleep(0.01)
+        speedX = boundSpeed(pidX.output)
+        speedY = boundSpeed(pidY.output)
+
+        print("Angles: {}, Speeds: ({}, {})".format(angles, speedX, speedY))
+
+        for i, weight in enumerate(WEIGHTS):
+            motorSpeed = weight[0] * speedX + weight[1] * speedY
+            robot.speed(i, motorSpeed)
+
+        time.sleep(0.005)
 
 except KeyboardInterrupt:
-	robot.stop()
-	sensor.stop()
+    robot.stop()
+    sensor.stop()
