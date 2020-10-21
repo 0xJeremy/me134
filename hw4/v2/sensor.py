@@ -19,6 +19,10 @@ MPU_WEIGHT = 1 - BNO_WEIGHT
 SLEEP_TIME = 0.01
 
 
+def applyDeadzone(angles, deadzone=5):
+    return [0 if angle < deadzone else angle for angle in angles]
+
+
 def averageTwoVectors(list1, list2, weight1=0.5, weight2=0.5):
     averages = []
     for i1, i2 in zip(list1, list2):
@@ -47,7 +51,7 @@ class Sensor:
     def start(self):
         Thread(target=self.run, args=()).start()
         while self.euler == None:
-            time.sleep(1)
+            sleep(1)
         print("Initialization Complete!\nSensor Running...")
         return self
 

@@ -8,6 +8,14 @@ ADDR_2 = 0x11
 MOTOR_RATIO = 20.4
 
 
+def boundSpeed(value):
+    if value > 100:
+        return 100
+    if value < -100:
+        return -100
+    return value
+
+
 class Wheel:
     def __init__(self, driver, id):
         self.driver = driver
@@ -40,7 +48,7 @@ class Robot:
         for driver in self.drivers:
             while driver.begin() != driver.STA_OK:
                 print("Waiting for driver to load...")
-                sleep(2)
+                sleep(1)
             driver.set_encoder_enable(driver.ALL)
             driver.set_encoder_reduction_ratio(driver.ALL, MOTOR_RATIO)
             driver.set_moter_pwm_frequency(1000)

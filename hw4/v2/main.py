@@ -2,31 +2,25 @@
 
 import math
 import time
-from sensor import Sensor
-from robot import Robot
+from sensor import Sensor, applyDeadzone
+from robot import Robot, boundSpeed
 from pid import PID
 
-
-def boundSpeed(value):
-    if value > 100:
-        return 100
-    if value < -100:
-        return -100
-    return value
-
-
-WEIGHTS = [(-math.sqrt(3) / 2, 0.5), (0, -1), (math.sqrt(3) / 2, 0.5)]
+DEADZONE = 5  # degrees
 
 # Too small = runs away, too big = jitters
 P = 6
 
-I = 0.0
+I = 2
 
 # Too small = jitters
-D = 0.0
+D = 0.8
 
-pidX = PID(P, I, D)
-pidY = PID(P, I, D)
+
+WEIGHTS = [(-math.sqrt(3) / 2, 0.5), (0, -1), (math.sqrt(3) / 2, 0.5)]
+
+pidX = PID(P=P, I=I, D=D)
+pidY = PID(P=P, I=I, D=D)
 
 sensor = Sensor().start()
 robot = Robot()
@@ -35,11 +29,8 @@ try:
     while True:
         angles = sensor.euler
 
-        pidX.update(angles[0])
-        pidY.update(angles[1])
-
-        speedX = boundSpeed(pidX.output)
-        speedY = boundSpeed(pidY.output)
+        speedX = boundSpeed(pidX.update(angles[0]))
+        speedY = boundSpeed(pidY.update(angles[1]))
 
         print("Angles: {}, Speeds: ({}, {})".format(angles, speedX, speedY))
 
