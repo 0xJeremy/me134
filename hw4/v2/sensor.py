@@ -1,6 +1,6 @@
 from threading import Thread
 from time import sleep, time
-from adafruit_mpu6050 import MPU6050
+from adafruit_mpu6050 import MPU6050, GyroRange
 from adafruit_bno055 import BNO055_I2C
 from fusion import Fusion
 from scipy.spatial.transform import Rotation
@@ -43,9 +43,13 @@ class Sensor:
     def __init__(self):
         i2c = busio.I2C(board.SCL, board.SDA)
         self.mpus = [MPU6050(i2c, address=MPU_1), MPU6050(i2c, address=MPU_2)]
+        for mpu in self.mpus:
+            mpu.gyro_range = GyroRange.RANGE_2000_DPS
+            
         self.fusions = [Fusion(timediff=timeDiff) for item in self.mpus]
         self.bno = BNO055_I2C(i2c)
         self.euler = None
+        self.eulerOffset = None
         self.stopped = False
 
     def start(self):
@@ -67,17 +71,25 @@ class Sensor:
             # mpuOrientations = [fusion.q for fusion in self.fusions]
 
             # mpuOrientation = averageTwoVectors(mpuOrientations[0], mpuOrientations[1])
-            bnoOrientation = self.bno.quaternion
+            # bnoOrientation = self.bno.quaternion
 
-            quaternion = bnoOrientation
+            # quaternion = bnoOrientation
 
             # quaternion = averageTwoVectors(
             #     bnoOrientation, mpuOrientation, BNO_WEIGHT, MPU_WEIGHT
             # )
 
             try:
-                angles = np.rad2deg(Rotation.from_quat(quaternion).as_rotvec())
-                self.euler = (angles[1], angles[2], angles[0])
+                # angles = np.rad2deg(Rotation.from_quat(quaternion).as_rotvec())
+                angles1 = mpuOrientationToBnoOrientation(self.mpus[0].gyro)
+                angles2 = mpuOrientationToBnoOrientation(self.mpus[1].gyro)
+                self.euler = averageTwoVectors(angles1, angles2)
+
+                # if self.eulerOffset is None:
+                #     self.eulerOffset = angles
+
+                # self.euler = (angles[1]-self.eulerOffset[1], angles[2]-self.eulerOffset[2], angles[0]-self.eulerOffset[0])
+                # self.euler = (angles[1], angles[2], angles[0])
             except ValueError:
                 print("Booting up sensors...")
 
