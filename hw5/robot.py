@@ -1,6 +1,5 @@
-from solver2 import Solver
+from solver3 import Solver
 from adafruit_servokit import ServoKit
-import time
 
 # link -> kit number, channel number, min pulse width, max pulse width
 LINKS = {
@@ -22,9 +21,6 @@ LINKS = {
     15: (1, 7, 500, 2600),
 }
 
-SLEEP = 0.005
-STEP = 2
-
 
 class Robot:
     def __init__(self):
@@ -36,20 +32,15 @@ class Robot:
         self.tick = 0
         for link in LINKS.values():
             self.kits[link[0]].servo[link[1]].set_pulse_width_range(link[2], link[3])
+        robot.updatePosition()
 
-    def move(self, steps):
-        for i in range(steps):
-            self.updateModel(i)
+    def move(self, direction):
+        self.solver.step(direction)
         self.updatePosition()
-        # for i in range(steps):
-        #     self.tick += STEP
-        #     self.updateModel(self.tick)
-        #     self.updatePosition()
-        #     time.sleep(SLEEP)
 
-    def updateModel(self, value):
-        print("Updating model... {}".format(value))
-        self.solver.update(value)
+    def turn(self, direction):
+        self.solver.turn(direction)
+        self.updatePosition()
 
     def updatePosition(self):
         points = self.solver.getPoints()
@@ -57,19 +48,10 @@ class Robot:
         for i in range(0, 15, 2):
             link1 = LINKS[i]
             link2 = LINKS[i + 1]
-            try:
-                self.kits[link1[0]].servo[link1[1]].angle = points[int(i / 2)].theta1 % 91
-                self.kits[link2[0]].servo[link2[1]].angle = (
-                    points[int(i / 2)].theta2 + 90
-                )
-            except:
-                # print("error:", i, point.theta1, point.theta2)
-                raise
+            self.kits[link1[0]].servo[link1[1]].angle = points[int(i / 2)].theta1
+            self.kits[link2[0]].servo[link2[1]].angle = points[int(i / 2)].theta2
 
     def reset(self, angle=90):
         for i in range(16):
             for kit in self.kits:
                 kit.servo[i].angle = angle
-
-    def stop(self):
-        pass
