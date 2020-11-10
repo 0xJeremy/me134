@@ -7,7 +7,7 @@ def setRange(value, minimum, maximum):
     return min(max(value, minimum), maximum)
 
 
-ANGLE_STEP = 20
+ANGLE_STEP = 15
 
 
 class Point:
@@ -29,11 +29,11 @@ class Solver:
             Point(),
             Point(),
             Point(theta1=90),
-            Point(theta1=90, isTurningLink=False),
+            Point(theta1=90),
             Point(),
             Point(),
             Point(theta1=90),
-            Point(theta1=90, isTurningLink=False),
+            Point(theta1=90),
         ]
         self.angleSteps = 0
 

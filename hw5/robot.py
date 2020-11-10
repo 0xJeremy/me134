@@ -11,7 +11,7 @@ LINKS = {
     5: (0, 5, 400, 2500),
     6: (0, 6, 400, 2500),
     7: (0, 7, 300, 2400),
-    8: (1, 0, 400, 2500),
+    8: (1, 0, 300, 2500),
     9: (1, 1, 500, 2600),
     10: (1, 2, 400, 2500),
     11: (1, 3, 400, 2500),
@@ -32,7 +32,7 @@ class Robot:
         self.tick = 0
         for link in LINKS.values():
             self.kits[link[0]].servo[link[1]].set_pulse_width_range(link[2], link[3])
-        robot.updatePosition()
+        self.updatePosition()
 
     def move(self, direction):
         self.solver.step(direction)
