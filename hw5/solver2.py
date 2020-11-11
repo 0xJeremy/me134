@@ -18,6 +18,8 @@ TRANSLATION = shift([-1, 1, 0, 1, -1, 0, 0, 0], 1)
 TURN_ANGLE = 0
 colors = ["red", "green", "blue", "orange", "darkcyan", "black", "purple", "deeppink"]
 
+MOVERS = shift([0, -1, 0, 1, 0, -1, 0, 1], 1)
+
 
 def makeWireframe(points, offset=0):
     # x, y, z, theta1, theta2
@@ -45,6 +47,7 @@ class Point:
         self.setXDirection()
         self.color = colors.pop()
         self.translation = 0
+        self.mover = 0
 
     def setXDirection(self):
         if self.theta1 == 0:
@@ -55,9 +58,13 @@ class Point:
     def assignTranslation(self, translation):
         self.translation = translation
 
+    def assignMover(self, mover):
+        self.mover = mover
+
     def updateX(self, tick):
         self.setXDirection()
-        self.theta1 += 1 if self.positive else -1
+        self.theta1 += self.mover
+        # self.theta1 += 1 if self.positive else -1
 
     def updateY(self, tick):
         self.theta2 += self.translation * (TURN_ANGLE / 90)
@@ -66,12 +73,30 @@ class Point:
 class xSolver:
     def __init__(self, points):
         self.points = points
+        self.offset = 0
 
     def update(self, tick):
         if tick % 90 == 0:
             self.points = shift(self.points, -1)
+            self.offset -= 1
+            if tick != 0:
+                global MOVERS
+                MOVERS = shift(MOVERS, -1)
+                for i, point in enumerate(self.points):
+                    point.assignMover(MOVERS[i])
+                if tick % 180 == 0:
+                    MOVERS = shift(MOVERS, 1)
+                    for i, point in enumerate(self.points):
+                        point.assignMover(MOVERS[i])
+                if tick % 270 == 0:
+                    MOVERS = shift(MOVERS, 1)
+                    for i, point in enumerate(self.points):
+                        point.assignMover(MOVERS[i])
         for point in self.points:
             point.updateX(tick)
+
+    def getPoints(self):
+        return shift(self.points, -self.offset)
 
     def plot(self):
         plt.figure()
@@ -103,6 +128,8 @@ class xSolver:
             plt.grid()
             plt.pause(0.05)
 
+        plotState(0)
+
         for i in range(361):
             self.update(i)
             if i % 4 == 0:
@@ -111,98 +138,108 @@ class xSolver:
         plt.show()
 
 
-class ySolver:
-    def __init__(self, points):
-        self.points = points
-        self.assignTranslations()
+# class ySolver:
+#     def __init__(self, points):
+#         self.points = points
+#         self.assignTranslations()
 
-    def assignTranslations(self):
-        for i, point in enumerate(self.points):
-            point.assignTranslation(TRANSLATION[i])
+#     def assignTranslations(self):
+#         for i, point in enumerate(self.points):
+#             point.assignTranslation(TRANSLATION[i])
 
-    def update(self, tick):
-        if tick % 90 == 0:
-            self.points = shift(self.points, 1)
-            self.assignTranslations()
-        for point in self.points:
-            point.updateY(tick)
+#     def update(self, tick):
+#         if tick % 90 == 0:
+#             self.points = shift(self.points, 1)
+#             self.assignTranslations()
+#         for point in self.points:
+#             point.updateY(tick)
 
 
 class Solver:
     def __init__(self):
         self.points = [
-            Point(theta2=TURN_ANGLE),
-            Point(theta1=90),
             Point(),
-            Point(theta1=90, theta2=-TURN_ANGLE),
             Point(),
             Point(theta1=90),
+            Point(theta1=90),
             Point(),
+            Point(),
+            Point(theta1=90),
             Point(theta1=90),
         ]
         self.xSolver = xSolver(self.points)
-        self.ySolver = ySolver(self.points)
+        self.assignMovers()
+        self.offset = 0
+        # self.ySolver = ySolver(self.points)
+
+    def assignMovers(self):
+        for i, point in enumerate(self.points):
+            point.assignMover(MOVERS[i])
 
     def getPoints(self):
-        return self.points
+        return self.xSolver.getPoints()
 
     def update(self, tick):
         if tick % 90 == 0:
             self.points = shift(self.points, -1)
+            self.offset -= 1
             if tick != 0:
-                global TRANSLATION
+                global TRANSLATION, MOVERS
                 TRANSLATION = shift(TRANSLATION, 2)
+                MOVERS = shift(MOVERS, 1)
+                self.offset += 1
+                self.assignMovers()
         self.xSolver.update(tick)
-        self.ySolver.update(tick)
+        # self.ySolver.update(tick)
 
     def showX(self):
         self.xSolver.plot()
 
-    def showY(self):
-        ax = plt.figure().gca(projection="3d")
+    # def showY(self):
+    #     ax = plt.figure().gca(projection="3d")
 
-        minX, maxX = 100, 0
-        minY, maxY = 100, 0
-        minZ, maxZ = -1, 1
+    #     minX, maxX = 100, 0
+    #     minY, maxY = 100, 0
+    #     minZ, maxZ = -1, 1
 
-        def plotState(i):
-            nonlocal minX, maxX, minY, maxY, minZ, maxZ
-            plt.cla()
-            nodes = makeWireframe(self.points, i // 90)
-            xs = nodes[:, 0]
-            ys = nodes[:, 1]
-            zs = nodes[:, 2]
+    #     def plotState(i):
+    #         nonlocal minX, maxX, minY, maxY, minZ, maxZ
+    #         plt.cla()
+    #         nodes = makeWireframe(self.points, i // 90)
+    #         xs = nodes[:, 0]
+    #         ys = nodes[:, 1]
+    #         zs = nodes[:, 2]
 
-            minX, maxX = min(min(xs), minX), max(max(xs), maxX)
-            minY, maxY = min(min(ys), minY), max(max(ys), maxY)
-            minZ, maxZ = min(min(zs), minZ), max(max(zs), maxZ)
+    #         minX, maxX = min(min(xs), minX), max(max(xs), maxX)
+    #         minY, maxY = min(min(ys), minY), max(max(ys), maxY)
+    #         minZ, maxZ = min(min(zs), minZ), max(max(zs), maxZ)
 
-            plt.xlim(minX, maxX)
-            plt.ylim(minZ, maxZ)
-            ax.set_zlim(minY, maxY)
+    #         plt.xlim(minX, maxX)
+    #         plt.ylim(minZ, maxZ)
+    #         ax.set_zlim(minY, maxY)
 
-            for i, point in enumerate(zip(xs, ys, zs)):
-                x, y, z = point
-                ax.scatter(
-                    x,
-                    z,
-                    y,
-                    label="{}".format(i),
-                    color=self.points[i % len(self.points)].color,
-                )
-            ax.plot(xs, zs, ys)
-            plt.pause(0.01)
+    #         for i, point in enumerate(zip(xs, ys, zs)):
+    #             x, y, z = point
+    #             ax.scatter(
+    #                 x,
+    #                 z,
+    #                 y,
+    #                 label="{}".format(i),
+    #                 color=self.points[i % len(self.points)].color,
+    #             )
+    #         ax.plot(xs, zs, ys)
+    #         plt.pause(0.01)
 
-        print(makeWireframe(self.points))
-        # plotState(0)
+    #     print(makeWireframe(self.points))
+    #     # plotState(0)
 
-        for i in range(270):
-            self.update(i)
-            if i % 3 == 0:
-                plotState(i)
-        print(makeWireframe(self.points))
+    #     for i in range(270):
+    #         self.update(i)
+    #         if i % 3 == 0:
+    #             plotState(i)
+    #     print(makeWireframe(self.points))
 
-        plt.show()
+    #     plt.show()
 
 
 if __name__ == "__main__":
