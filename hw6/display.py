@@ -43,11 +43,12 @@ class Display:
 
     def set(self, values):
         for i in range(HEIGHT):
+            vert = HEIGHT - i - 1
             for j in range(WIDTH):
                 if i % 2 != 0:
-                    self.pixels[int(i * WIDTH + j)] = values[i][j]
+                    self.pixels[int(vert * WIDTH + j)] = values[vert][j]
                 else:
-                    self.pixels[int((i+1) * WIDTH - j - 1)] = values[i][j]
+                    self.pixels[int((vert+1) * WIDTH - j - 1)] = values[vert][j]
         self.pixels.show()
 
     def reset(self):
