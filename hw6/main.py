@@ -6,6 +6,7 @@ from receiver import Receiver
 from pong import Pong, WIDTH, HEIGHT
 from display import Display
 from textscroller import TextScroller
+from segment import Segmenter
 
 UPDATE = 0.5
 
@@ -45,7 +46,32 @@ def pong_head():
     print("Not implemented")
 
 def segment():
-    print("Not implemented")
+    import cv2
+    # from picamera.array import PiRGBArray
+    # from picamera import PiCamera
+    display = Display(brightness=BRIGHTNESS)
+    engine = Segmenter()
+    cam = cv2.VideoCapture(0)
+    # camera = PiCamera()
+    # camera.resolution = (640, 480)
+    # camera.framerate = 32
+    # rawCapture = PiRGBArray(camera, size=(640, 480))
+
+    try:
+        while True:
+        # for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+            # frame = frame.array
+            start = time.time()
+            ret, frame = cam.read()
+            frame = cv2.flip(frame, 1)
+            start = time.time()
+            engine.inference(frame)
+            display.set(engine.getForDisplay())
+            # cv2.imshow("frame", engine.getForDisplay())
+            print("{:.2f} ms".format((time.time()-start)*1000))
+    except KeyboardInterrupt:
+        cam.release()
+
 
 def text(text):
     scroller = TextScroller()

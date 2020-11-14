@@ -34,6 +34,7 @@ class Segmenter:
     def __init__(self):
         self.interpreter = make_interpreter('models/deeplabv3_mnv2_pascal_quant_edgetpu.tflite', device=':0')
         self.interpreter.allocate_tensors()
+        self.maskedImage = None
 
     def inference(self, image):
         resized, _ = common.set_resized_input(self.interpreter, (image.shape[0], image.shape[1]), lambda size: cv2.resize(image, size))
@@ -41,8 +42,13 @@ class Segmenter:
         result = segment.get_output(self.interpreter)
         if len(result.shape) == 3:
             result = np.argmax(result, axis=-1)
-        mask_img = label_to_color_image(result).astype(np.uint8)
-        return mask_img
+        self.maskedImage = label_to_color_image(result).astype(np.uint8)
+        return self.maskedImage
+
+    def getForDisplay(self):
+        if self.maskedImage is None:
+            return None
+        return cv2.resize(self.maskedImage, (20, 15))
 
 
 if __name__ == '__main__':
@@ -52,12 +58,12 @@ if __name__ == '__main__':
     while True:
         start = time.time()
         ret, frame = cam.read()
-        frame = cv2.resize(frame, (320, 320))
+        # frame = cv2.resize(frame, (320, 320))
         key = cv2.waitKey(10)
         if key == ord('q'):
             cam.release()
             break
         start = time.time()
         result = engine.inference(frame)
-        cv2.imshow("frame", result)
+        cv2.imshow("frame", engine.getForDisplay())
         print("{:.2f} ms".format((time.time()-start)*1000))
