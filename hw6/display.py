@@ -6,7 +6,7 @@ import neopixel
 PIN = board.D18
 LENGTH = 300
 ORDER = neopixel.GRB
-BRIGHTNESS = 0.05
+BRIGHTNESS = 0.5
 
 WIDTH = 20
 HEIGHT = 15
@@ -42,26 +42,31 @@ class Display:
         self.reset()
 
     def set(self, values):
+        values = np.flipud(values)
         for i in range(HEIGHT):
-            vert = HEIGHT - i - 1
             for j in range(WIDTH):
                 if i % 2 != 0:
-                    self.pixels[int(vert * WIDTH + j)] = values[vert][j]
+                    self.pixels[int(i * WIDTH + j)] = values[i][j]
                 else:
-                    self.pixels[int((vert+1) * WIDTH - j - 1)] = values[vert][j]
+                    self.pixels[int((i + 1) * WIDTH - j - 1)] = values[i][j]
         self.pixels.show()
 
     def reset(self):
         self.pixels.fill((0, 0, 0))
         self.pixels.show()
 
-    def rainbow(self, wait=0.01):
-        for j in range(255):
-            for i in range(LENGTH):
-                pixel_index = (i * 256 // LENGTH) + j
-                self.pixels[i] = wheel(pixel_index & 255)
-            self.pixels.show()
-            time.sleep(wait)
+    def fill(self, color):
+        self.pixels.fill(color)
+        self.pixels.show()
+
+    def rainbow(self, runs=10, wait=0.01):
+        for run in range(runs):
+            for j in range(255):
+                for i in range(LENGTH):
+                    pixel_index = (i * 256 // LENGTH) + j
+                    self.pixels[i] = wheel(pixel_index & 255)
+                self.pixels.show()
+                time.sleep(wait)
 
 
 if __name__ == "__main__":

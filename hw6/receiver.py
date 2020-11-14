@@ -3,14 +3,15 @@ import json
 import time
 from threading import Thread
 
-ADDRESS = '172.20.10.3'
+ADDRESS = "172.20.10.3"
 PORT = 8484
+
 
 class Receiver:
     def __init__(self, address=ADDRESS, port=PORT):
         self.context = zmq.Context()
         self.subscriber = self.context.socket(zmq.PAIR)
-        self.subscriber.connect('tcp://{}:{}'.format(address, port))
+        self.subscriber.connect("tcp://{}:{}".format(address, port))
         self.stopped = False
         self.data = [None, None]
 
@@ -31,7 +32,7 @@ class Receiver:
         self.stopped = True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     receiver = Receiver().start()
 
     try:

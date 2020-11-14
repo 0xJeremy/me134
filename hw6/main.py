@@ -17,9 +17,9 @@ try:
         data = receiver.data
         print("Data:", data)
         if data[0] is not None:
-            pong.setPaddle(0, int(HEIGHT*data[0][1]))
+            pong.setPaddle(0, int(HEIGHT * data[0][1]))
         if data[1] is not None:
-            pong.setPaddle(1, int(HEIGHT*data[1][1]))
+            pong.setPaddle(1, int(HEIGHT * data[1][1]))
             started = True
 
         pixels = pong.getBoard()

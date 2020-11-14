@@ -1,6 +1,8 @@
 import numpy as np
 import random
+
 # from display import wheel
+
 
 def setRange(value, minimum, maximum):
     return min(max(value, minimum), maximum)
@@ -16,6 +18,7 @@ PADDLE = 1
 BALL = 2
 
 PADDLE_LENGTH = 5
+
 
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
@@ -38,6 +41,7 @@ def wheel(pos):
         b = int(255 - pos * 3)
     return (r, g, b)
 
+
 SPEED_REDUCER = 6
 
 
@@ -50,7 +54,10 @@ class Ball:
         SPEED_REDUCER -= 1
         SPEED_REDUCER = max(SPEED_REDUCER, 2)
         self.position = (int(HEIGHT / 2), int(WIDTH / 2))
-        self.velocity = (random.choice([-1, 0, 1]), random.choice([-1/SPEED_REDUCER, 1/SPEED_REDUCER]))
+        self.velocity = (
+            random.choice([-1, 0, 1]),
+            random.choice([-1 / SPEED_REDUCER, 1 / SPEED_REDUCER]),
+        )
 
     def flipXDirection(self):
         self.velocity = (self.velocity[0], -self.velocity[1])
@@ -83,11 +90,6 @@ class Pong:
     def generateBoard(self):
         self.board = np.full((HEIGHT, WIDTH, 3), (0, 0, 0))
         self.invBoard = np.full((HEIGHT, WIDTH, 3), (255, 255, 255))
-        # for i in range(HEIGHT):
-        #     if self.paddles[0] <= i and self.paddles[0] + PADDLE_LENGTH > i:
-        #         self.board[i][0] = PADDLE
-        #     if self.paddles[1] <= i and self.paddles[1] + PADDLE_LENGTH > i:
-        #         self.board[i][WIDTH - 1] = PADDLE
 
     def step(self):
         atEnd = self.ball.step()

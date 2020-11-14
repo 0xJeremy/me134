@@ -28,22 +28,22 @@ while True:
     cv2.imshow("Hands!", toShow)
 
     pixels = pong.getBoard()
-    image = cv2.resize(pixels.astype('float32'), (40, 30))
-    cv2.imshow('Pong!', image)
+    image = cv2.resize(pixels.astype("float32"), (40, 30))
+    cv2.imshow("Pong!", image)
 
     if cv2.waitKey(5) & 0xFF == ord("q"):
         break
 
     if camera.hands[0] is not None:
-        # sender.send(camera.hands)
+        sender.send(camera.hands)
         if camera.hands[0] is not None:
-            pong.setPaddle(0, int(HEIGHT*camera.hands[0][1]))
+            pong.setPaddle(0, int(HEIGHT * camera.hands[0][1]))
         if camera.hands[1] is not None:
-            pong.setPaddle(1, int(HEIGHT*camera.hands[1][1]))
+            pong.setPaddle(1, int(HEIGHT * camera.hands[1][1]))
             started = True
 
-    if started:
-        pong.step()
+    # if started:
+    #     pong.step()
 
     time.sleep(0.05)
 
