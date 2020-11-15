@@ -65,17 +65,17 @@ class TextScroller:
         pass
 
     def stringToPixels(self, text):
-        arr = charToPixels(text, fontsize=12)
+        arr = charToPixels(text, fontsize=14)
         result = np.expand_dims(arr, axis=2)
         result = np.where(result, (1, 1, 1), (0, 0, 0))
         return result.astype('uint8')
 
-    def displayTextScroll(self, display, text, color=(0, 0, 255)):
+    def displayTextScroll(self, display, text, color=(0, 0, 255), sleep=0.4):
         text = self.stringToPixels(text)
         for i in range(text.shape[1] - WIDTH):
             display.set(cut(text, offset=i, color=color))
             time.sleep(0.1)
-        time.sleep(0.4)
+        time.sleep(sleep)
         display.reset()
 
 

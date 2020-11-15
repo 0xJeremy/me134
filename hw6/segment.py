@@ -65,5 +65,5 @@ if __name__ == '__main__':
             break
         start = time.time()
         result = engine.inference(frame)
-        cv2.imshow("frame", engine.getForDisplay())
+        cv2.imshow("frame", engine.maskedImage)
         print("{:.2f} ms".format((time.time()-start)*1000))
