@@ -3,6 +3,7 @@ from motion_planner import MotionPlanner, mapValue
 
 import matplotlib.pyplot as plt
 
+
 def getMinMax(list2d):
     minVal, maxVal = min(list2d[0]), max(list2d[0])
 
@@ -11,6 +12,7 @@ def getMinMax(list2d):
         maxVal = max(maxVal, max(array))
 
     return minVal, maxVal
+
 
 def saveToFile(input):
     all_xs, all_ys = Pather(input).getPaths()
@@ -34,13 +36,13 @@ def saveToFile(input):
             x -= x_min
             y -= y_min
 
-            x = mapValue(x, 0, x_max-x_min, 20, 100)
-            y = mapValue(y, 0, y_max-y_min, 20, 100)
+            x = mapValue(x, 0, x_max - x_min, 20, 100)
+            y = mapValue(y, 0, y_max - y_min, 20, 100)
 
             accX.append(x)
             accY.append(y)
 
-            angles = planner.getAngles(x, y+offset)
+            angles = planner.getAngles(x, y + offset)
 
             tips = planner.links[-1].tip()
             tipX.append(tips[0])
@@ -54,4 +56,5 @@ def saveToFile(input):
     plt.scatter(tipX, tipY)
     plt.show()
 
-saveToFile('svg_samples/sample.svg')
+
+saveToFile("svg_samples/sample.svg")

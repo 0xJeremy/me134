@@ -3,6 +3,7 @@ import random
 from textscroller import TextScroller
 import time
 
+
 def setRange(value, minimum, maximum):
     return min(max(value, minimum), maximum)
 
@@ -126,7 +127,9 @@ class Pong:
             color = (0, 0, 0)
             toShow = np.copy(self.invBoard)
             if display:
-              self.scroller.displayTextScroll(display, '{} - {}'.format(self.score[0], self.score[1]), sleep=1)
+                self.scroller.displayTextScroll(
+                    display, "{} - {}".format(self.score[0], self.score[1]), sleep=1
+                )
             self.scored -= 1
             if self.scored == 0:
                 self.ball.reset()
@@ -144,11 +147,6 @@ class Pong:
         # toShow[int(x)][int(y)] = BALL_COLOR
         toShow[int(x)][int(y)] = color
         return toShow
-
-    # def plot(self):
-    #     board = self.getBoard()
-    #     cv2.imshow('Pong!', board)
-    #     cv2.waitKey(5)
 
 
 if __name__ == "__main__":

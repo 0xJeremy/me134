@@ -3,11 +3,11 @@
 import time
 import sys
 
-RAISE = 'RAISE\n'
+RAISE = "RAISE\n"
 HOP_HEIGHT = 0.5
 TRAVEL_TIME = 0.5
-DEFAULT_FILE = 'out.pos'
-DEFAULT_STYLE = 1.2345*3.1415
+DEFAULT_FILE = "out.pos"
+DEFAULT_STYLE = 1.2345 * 3.1415
 
 
 def getMinMax(list2d):
@@ -24,10 +24,11 @@ def saveToFile(input, output, arm):
     from pather import Pather
     from motion_planner import MotionPlanner, mapValue
     import matplotlib.pyplot as plt
+
     all_xs, all_ys = Pather(input).getPaths()
     planner = MotionPlanner(arm)
 
-    file = open(output, 'w')
+    file = open(output, "w")
     offset = 0
 
     x_min, x_max = getMinMax(all_xs)
@@ -51,11 +52,11 @@ def saveToFile(input, output, arm):
             accX.append(x)
             accY.append(y)
 
-            angles = planner.getAngles(x, y+offset)
+            angles = planner.getAngles(x, y + offset)
 
             angles[0] -= 90
 
-            file.write('{} {}\n'.format(angles[0], angles[1]))
+            file.write("{} {}\n".format(angles[0], angles[1]))
 
         file.write(RAISE)
 
@@ -66,11 +67,11 @@ def saveToFile(input, output, arm):
 
 
 def parseFile(file):
-    file = open(file, 'r')
+    file = open(file, "r")
     all_angles = []
     angles = []
     for line in file:
-        text = line.split(' ')
+        text = line.split(" ")
         if text[0] == RAISE:
             all_angles.append(angles)
             angles = []
@@ -82,6 +83,7 @@ def parseFile(file):
 
 def drawFromFile(file, style_factor=DEFAULT_STYLE):
     from robot import Robot
+
     robot = Robot(style_factor)
 
     all_angles = parseFile(file)
@@ -99,20 +101,22 @@ def readCmdLine(argv):
     infile = DEFAULT_FILE
     outfile = DEFAULT_FILE
     style_factor = DEFAULT_STYLE
-    arm = 'short'
+    arm = "short"
     draw_live = False
 
     if len(sys.argv) > 1:
         if "-h" in sys.argv or "--help" in sys.argv:
-            print('usage: main.py [-h] [-i] input_file [-o] output_file [-s] style_factor [-a] arm [-dl]\n\n'
-                  'Create and/or execute robot path\n\n'
-                  'optional arguments:\n'
-                  '-h, --help\tshow help message and exit\n'
-                  '-i, --infile\tinput .svg or .pos file\n'
-                  '-o, --outfile\toutput .pos file to save to\n'
-                  '-s, --style\tthe desired robot arm style factor\n'
-                  '-a, --arm\tthe arm set-up, \'short\' or \'long\'\n'
-                  '-dl, --drawlive\tcompiles .svg and runs path')
+            print(
+                "usage: main.py [-h] [-i] input_file [-o] output_file [-s] style_factor [-a] arm [-dl]\n\n"
+                "Create and/or execute robot path\n\n"
+                "optional arguments:\n"
+                "-h, --help\tshow help message and exit\n"
+                "-i, --infile\tinput .svg or .pos file\n"
+                "-o, --outfile\toutput .pos file to save to\n"
+                "-s, --style\tthe desired robot arm style factor\n"
+                "-a, --arm\tthe arm set-up, 'short' or 'long'\n"
+                "-dl, --drawlive\tcompiles .svg and runs path"
+            )
             sys.exit()
 
         for arg, val in zip(sys.argv[1::2], sys.argv[2::2]):
@@ -128,7 +132,7 @@ def readCmdLine(argv):
     return [infile, outfile, style_factor, arm, draw_live]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     [infile, outfile, style_factor, arm, draw_live] = readCmdLine(sys.argv)
 
     if ".svg" in infile:

@@ -7,9 +7,12 @@ from pycoral.adapters import detect
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 
+
 class FaceDetector:
     def __init__(self, camera=0, confidence=0.3):
-        self.interpreter = make_interpreter('models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite')
+        self.interpreter = make_interpreter(
+            "models/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite"
+        )
         self.interpreter.allocate_tensors()
         self.objects = None
         self.confidence = confidence
@@ -27,17 +30,22 @@ class FaceDetector:
         while not self.stopped:
             ret, self.frame = self.cam.read()
             self.frame = cv2.flip(cv2.resize(self.frame, (320, 320)), 1)
-            
+
             common.set_input(self.interpreter, self.frame)
             self.interpreter.invoke()
             self.objects = detect.get_objects(self.interpreter, self.confidence)
 
             if len(self.objects) >= 1:
                 box = self.objects[0].bbox
-                x, y, w, h = box.xmin, box.ymin, box.xmax - box.xmin, box.ymax - box.ymin
+                x, y, w, h = (
+                    box.xmin,
+                    box.ymin,
+                    box.xmax - box.xmin,
+                    box.ymax - box.ymin,
+                )
                 imgHeight, imgWidth, _ = self.frame.shape
-                centerX = x + w/2
-                centerY = y + h/2
+                centerX = x + w / 2
+                centerY = y + h / 2
                 if (centerX / imgWidth) < 0.33:
                     self.quadrant = [0, -1]
                 elif (centerX / imgWidth) > 0.66:
@@ -57,7 +65,8 @@ class FaceDetector:
     def stop(self):
         self.stopped = True
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     engine = FaceDetector(camera=2).start()
 
     time.sleep(1)
@@ -66,21 +75,19 @@ if __name__ == '__main__':
         frame = engine.frame
 
         key = cv2.waitKey(10)
-        if key == ord('q'):
+        if key == ord("q"):
             break
 
         boxes = engine.getBoundingBoxes() or []
-        # for box in boxes:
-        #     box = box.bbox
-        #     box = [box.xmin, box.ymin, box.xmax, box.ymax]
-        #     cv2.rectangle(frame, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (255,0,0), 2)
         for box in boxes:
             box = box.bbox
             x, y, w, h = box.xmin, box.ymin, box.xmax - box.xmin, box.ymax - box.ymin
             imgHeight, imgWidth, _ = frame.shape
-            centerX = int(x + w/2)
-            centerY = int(y + h/2)
-            cv2.rectangle(frame, (centerX, centerY), (centerX+3, centerY+3), (0, 0, 255), 4)
+            centerX = int(x + w / 2)
+            centerY = int(y + h / 2)
+            cv2.rectangle(
+                frame, (centerX, centerY), (centerX + 3, centerY + 3), (0, 0, 255), 4
+            )
         cv2.imshow("frame", frame)
         time.sleep(0.05)
     engine.stop()

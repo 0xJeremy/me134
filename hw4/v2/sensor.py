@@ -45,7 +45,7 @@ class Sensor:
         self.mpus = [MPU6050(i2c, address=MPU_1), MPU6050(i2c, address=MPU_2)]
         for mpu in self.mpus:
             mpu.gyro_range = GyroRange.RANGE_2000_DPS
-            
+
         self.fusions = [Fusion(timediff=timeDiff) for item in self.mpus]
         self.bno = BNO055_I2C(i2c)
         self.euler = None

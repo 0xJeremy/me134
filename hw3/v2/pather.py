@@ -24,7 +24,7 @@ def fill(start, end, step):
         start, end = end, start
         flag = True
     if start == end:
-        return [start]*30
+        return [start] * 30
     points = []
     while start < end and len(points) < 50:
         points.append(start)
@@ -66,7 +66,10 @@ class Pather:
             for item in path:
                 self.parseSVG(item)
         elif isinstance(path, Line):
-            dist = math.sqrt(math.pow(path.start.real - path.end.real, 2) + math.pow(path.start.imag - path.end.imag, 2))
+            dist = math.sqrt(
+                math.pow(path.start.real - path.end.real, 2)
+                + math.pow(path.start.imag - path.end.imag, 2)
+            )
             xs = np.linspace(path.start.real, path.end.real, round(dist / STEP))
             ys = np.linspace(path.start.imag, path.end.imag, round(dist / STEP))
             for x, y in zip(xs, ys):

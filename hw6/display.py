@@ -76,19 +76,3 @@ if __name__ == "__main__":
     toShow[1][0] = (255, 255, 255)
 
     display.set(toShow)
-
-    # toShow = np.full((HEIGHT, WIDTH, 3), 0)
-    # value1 = np.array([255, 0, 0])
-    # value2 = np.array([0, 255, 0])
-    # value3 = np.array([0, 0, 255])
-    # for i in range(len(toShow)):
-    #     if i % 3 == 0:
-    #         toShow[i] = [value1 for j in range(len(toShow[i]))]
-    #     elif i % 2 == 0:
-    #         toShow[i] = [value2 for j in range(len(toShow[i]))]
-    #     else:
-    #         toShow[i] = [value3 for j in range(len(toShow[i]))]
-    # display.set(toShow)
-
-    # while True:
-    #     display.rainbow()
