@@ -8,10 +8,7 @@ from display import Display
 from textscroller import TextScroller
 from segment import Segmenter
 
-UPDATE = 0.5
-
 BRIGHTNESS = 0.5
-
 SHOW_INTRO = True
 
 
@@ -77,7 +74,7 @@ def segment():
 
 def text(text):
     scroller = TextScroller()
-    disp = Display()
+    disp = Display(brightness=BRIGHTNESS)
     time.sleep(1)
     scroller.displayTextScroll(disp, text)
 
@@ -131,6 +128,22 @@ def snake():
             # break
 
 
+def video():
+    from video import Video
+
+    video = Video()
+    display = Display(brightness=BRIGHTNESS)
+    video.play(display)
+
+
+def mirror():
+    from mirror import Mirror
+
+    mirror = Mirror()
+    display = Display(brightness=BRIGHTNESS)
+    mirror.play(display)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("A small robotics project :)")
     parser.add_argument(
@@ -159,6 +172,10 @@ if __name__ == "__main__":
     parser.add_argument("--text", type=str, help="Displays a string of text")
     parser.add_argument("--snake", help="Plays a game of snake!", action="store_true")
     parser.add_argument("--skip", help="Skips the intro screen", action="store_true")
+    parser.add_argument("--video", help="Plays a video!", action="store_true")
+    parser.add_argument(
+        "--mirror", help="Mirrors the camera input", action="store_true"
+    )
 
     args = parser.parse_args()
 
@@ -180,3 +197,7 @@ if __name__ == "__main__":
         text(args.text)
     elif args.snake:
         snake()
+    elif args.video:
+        video()
+    elif args.mirror:
+        mirror()
