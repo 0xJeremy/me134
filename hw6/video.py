@@ -17,11 +17,6 @@ class Video:
             display.set(frame)
             time.sleep(0.05)
 
-            # cv2.imshow('Video', frame)
-            # key = cv2.waitKey(50) & 0xFF
-            # if key == ord('q'):
-            #     break
-
 
 if __name__ == "__main__":
     video = Video()

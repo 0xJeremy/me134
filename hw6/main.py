@@ -82,7 +82,6 @@ def text(text):
 def snake():
     # import cv2
     from snake import Snake
-    import sys
 
     # from facedetector2 import FaceDetector
     from facedetector import FaceDetector
@@ -148,7 +147,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("A small robotics project :)")
     parser.add_argument(
         "--pong",
-        help="Plays a game of pong (requires streaming from a laptop)",
+        help="Plays a game of pong! (requires streaming from a laptop)",
         action="store_true",
     )
     parser.add_argument(
@@ -161,7 +160,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pong_head",
-        help="Plays a game of pong using head tracking",
+        help="Plays a game of pong using head tracking!",
         action="store_true",
     )
     parser.add_argument(
@@ -171,10 +170,10 @@ if __name__ == "__main__":
     )
     parser.add_argument("--text", type=str, help="Displays a string of text")
     parser.add_argument("--snake", help="Plays a game of snake!", action="store_true")
-    parser.add_argument("--skip", help="Skips the intro screen", action="store_true")
+    parser.add_argument("--skip", help="Skips the intro screen of any game", action="store_true")
     parser.add_argument("--video", help="Plays a video!", action="store_true")
     parser.add_argument(
-        "--mirror", help="Mirrors the camera input", action="store_true"
+        "--mirror", help="Displays the camera input", action="store_true"
     )
 
     args = parser.parse_args()
