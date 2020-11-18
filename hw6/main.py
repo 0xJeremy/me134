@@ -170,7 +170,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--text", type=str, help="Displays a string of text")
     parser.add_argument("--snake", help="Plays a game of snake!", action="store_true")
-    parser.add_argument("--skip", help="Skips the intro screen of any game", action="store_true")
+    parser.add_argument(
+        "--skip", help="Skips the intro screen of any game", action="store_true"
+    )
     parser.add_argument("--video", help="Plays a video!", action="store_true")
     parser.add_argument(
         "--mirror", help="Displays the camera input", action="store_true"
