@@ -1,7 +1,7 @@
 import numpy as np
 import random
-
-# from display import wheel
+from textscroller import TextScroller
+import time
 
 
 def setRange(value, minimum, maximum):
@@ -79,7 +79,9 @@ class Ball:
 class Pong:
     def __init__(self):
         self.reset()
+        self.scroller = TextScroller()
         self.tick = 0
+        self.score = [0, 0]
 
     def reset(self):
         self.paddles = [0, 0]
@@ -100,9 +102,13 @@ class Pong:
             self.ball.flipXDirection()
         else:
             print("SCOREEEEEEE")
+            if atEnd == 0:
+                self.score[1] += 1
+            else:
+                self.score[0] += 1
             self.ball.velocity = [0, 0]
             # self.ball.reset()
-            self.scored = 4
+            self.scored = 1
 
     def checkPaddleBlock(self, paddleNum):
         yBall = self.ball.position[0]
@@ -115,11 +121,15 @@ class Pong:
     def setPaddle(self, paddle, position):
         self.paddles[paddle] = setRange(position, 0, WIDTH - PADDLE_LENGTH)
 
-    def getBoard(self):
+    def getBoard(self, display=None):
         self.tick += 2
         if self.scored > 0:
             color = (0, 0, 0)
             toShow = np.copy(self.invBoard)
+            if display:
+                self.scroller.displayTextScroll(
+                    display, "{} - {}".format(self.score[0], self.score[1]), sleep=1
+                )
             self.scored -= 1
             if self.scored == 0:
                 self.ball.reset()
@@ -137,11 +147,6 @@ class Pong:
         # toShow[int(x)][int(y)] = BALL_COLOR
         toShow[int(x)][int(y)] = color
         return toShow
-
-    # def plot(self):
-    #     board = self.getBoard()
-    #     cv2.imshow('Pong!', board)
-    #     cv2.waitKey(5)
 
 
 if __name__ == "__main__":

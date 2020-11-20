@@ -16,6 +16,7 @@ def cubicBezier(t, p):
         + (t ** 3 * p[3])
     )
 
+
 def fill(start, end, step):
     points = []
     while start < end:

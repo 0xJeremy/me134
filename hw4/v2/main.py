@@ -22,11 +22,7 @@ I = 0
 D = 15
 
 
-WEIGHTS = [
-    (0, 1),
-    (math.sqrt(3) / 2, -0.5),
-    (-math.sqrt(3) / 2, -0.5)
-]
+WEIGHTS = [(0, 1), (math.sqrt(3) / 2, -0.5), (-math.sqrt(3) / 2, -0.5)]
 
 pidX = PID(P=P, I=I, D=D)
 pidY = PID(P=P, I=I, D=D)

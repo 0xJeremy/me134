@@ -15,6 +15,7 @@ def resetTimer():
     global timer
     timer = time.time()
 
+
 SLEEP = 1
 # 8 forward
 # turn +1 1
@@ -40,20 +41,20 @@ def autonomous(robot):
     time.sleep(SLEEP)
     for i in range(5):
         robot.move(1)
-        time.sleep(SLEEP*2)
+        time.sleep(SLEEP * 2)
     robot.turn(-1)
     time.sleep(SLEEP)
     robot.turn(-1)
     time.sleep(SLEEP)
     for i in range(6):
         robot.move(-1)
-        time.sleep(SLEEP*2)
+        time.sleep(SLEEP * 2)
     robot.turn(1)
     time.sleep(SLEEP)
     robot.turn(1)
     time.sleep(SLEEP)
     robot.move(1)
-    time.sleep(SLEEP*2)
+    time.sleep(SLEEP * 2)
     robot.turn(-1)
     time.sleep(SLEEP)
 
@@ -64,14 +65,14 @@ def autonomous(robot):
     time.sleep(SLEEP)
     for i in range(7):
         robot.move(1)
-        time.sleep(SLEEP*2)
+        time.sleep(SLEEP * 2)
     robot.turn(1)
     time.sleep(SLEEP)
     robot.turn(1)
     time.sleep(SLEEP)
     for i in range(4):
         robot.move(-1)
-        time.sleep(SLEEP*2)
+        time.sleep(SLEEP * 2)
     robot.turn(-1)
     time.sleep(SLEEP)
     for i in range(15):
@@ -129,9 +130,11 @@ def main():
         autonomous(robot)
 
     # Setup callbacks
-    xbox.setupControlCallback(xbox.XboxControls.START, forward) # actually right trigger
+    xbox.setupControlCallback(
+        xbox.XboxControls.START, forward
+    )  # actually right trigger
     xbox.setupControlCallback(xbox.XboxControls.A, reverse)
-    xbox.setupControlCallback(xbox.XboxControls.Y, turnLeft) # actually x
+    xbox.setupControlCallback(xbox.XboxControls.Y, turnLeft)  # actually x
     xbox.setupControlCallback(xbox.XboxControls.B, turnRight)
     xbox.setupControlCallback(xbox.XboxControls.BACK, auto)
     # xbox.setupControlCallback(xbox.XboxControls.START, reset)
