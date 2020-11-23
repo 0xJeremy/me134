@@ -1,5 +1,6 @@
 # try:
 from adafruit_servokit import ServoKit
+import time
 
 boards = [ServoKit(channels=16, address=0x40), ServoKit(channels=16, address=0x41)]
 
@@ -10,13 +11,12 @@ def setup(legs):
             boards[joint.board].servo[joint.channel].set_pulse_width_range(
                 joint.minPulse, joint.maxPulse
             )
-            boards[joint.board].servo[joint.channel].angle = joint.startAngle
 
-
-def actuate(legs):
+def actuate(legs, sleep=0.2):
     for leg in legs:
         for joint in leg.joints:
             boards[joint.board].servo[joint.channel].angle = joint.currAngle
+    time.sleep(sleep)
 
 
 # except:
