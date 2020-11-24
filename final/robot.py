@@ -1,6 +1,7 @@
 from actuation import setup, actuate
 import time
 
+
 class Joint:
     def __init__(self, board, channel, minPulse, maxPulse, startAngle, inverted=False):
         self.board = board
@@ -36,7 +37,7 @@ JOINT14 = Joint(1, 4, 700, 2500, 135)
 JOINT15 = Joint(1, 5, 500, 2500, 90, inverted=True)
 JOINT16 = Joint(1, 6, 500, 2500, 135)
 JOINT17 = Joint(1, 7, 600, 2500, 135)
-JOINT18 = Joint(1, 8, 600, 2500, 90, inverted=True)
+JOINT18 = Joint(1, 8, 450, 2500, 90, inverted=True)
 
 
 class Leg:
@@ -55,6 +56,7 @@ LEG5 = Leg(JOINT13, JOINT14, JOINT15)
 LEG6 = Leg(JOINT16, JOINT17, JOINT18)
 
 LEGS = [LEG1, LEG2, LEG3, LEG4, LEG5, LEG6]
+
 
 class Robot:
     def __init__(self):
@@ -77,7 +79,7 @@ class Robot:
         actuate(moveLegs)
 
         # Forward
-        for i in range(angle+1):
+        for i in range(angle + 1):
             for leg in moveLegs:
                 leg.shoulder.addAngle(direction)
 
@@ -91,21 +93,17 @@ class Robot:
             leg.knee.addAngle(10)
         actuate(moveLegs)
 
-    def forward(self, angle=10):
-        self.__walk(angle, 1)
-
-    def backward(self, angle=10):
-        self.__walk(angle, -1)
-
     def __turn(self, angle, direction):
         self.turnTick += 1
 
+        # Re-orient body
         if self.turnTick % 3 == 0:
-            for i in range(angle+1):
+            for i in range(angle + 1):
                 for leg in self.legs:
                     leg.shoulder.addAngle(-direction, ignoreInverted=True)
                 actuate(self.legs, sleep=0.05)
 
+        # Move the legs
         else:
             moveLegs = self.legsEven if self.turnTick % 2 == 0 else self.legsOdd
 
@@ -113,7 +111,7 @@ class Robot:
                 leg.knee.addAngle(-angle)
             actuate(moveLegs)
 
-            for i in range(angle+1):
+            for i in range(angle + 1):
                 for leg in moveLegs:
                     leg.shoulder.addAngle(direction, ignoreInverted=True)
                 actuate(self.legs, sleep=0.05)
@@ -122,12 +120,6 @@ class Robot:
                 leg.knee.addAngle(angle)
             actuate(moveLegs)
 
-    def turnRight(self, angle=10):
-        self.__turn(angle, direction=-1)
-
-    def turnLeft(self, angle=10):
-        self.__turn(angle, direction=1)
-
     def __changeHeight(self, targetKnee, targetFoot):
         steps = 10
         diffKnee = (targetKnee - self.currKnee) / steps
@@ -135,6 +127,18 @@ class Robot:
         for i in range(steps):
             self.stand(knee=self.currKnee + diffKnee, foot=self.currFoot + diffFoot)
             actuate(self.legs, sleep=0.01)
+
+    def forward(self, angle=10):
+        self.__walk(angle, 1)
+
+    def backward(self, angle=10):
+        self.__walk(angle, -1)
+
+    def turnRight(self, angle=10):
+        self.__turn(angle, direction=-1)
+
+    def turnLeft(self, angle=10):
+        self.__turn(angle, direction=1)
 
     def goTall(self):
         self.__changeHeight(targetKnee=130, targetFoot=70)
@@ -151,8 +155,7 @@ class Robot:
             leg.foot.currAngle = foot
         actuate(self.legs)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     robot = Robot()
     robot.stand()
-
-

@@ -12,6 +12,7 @@ def setup(legs):
                 joint.minPulse, joint.maxPulse
             )
 
+
 def actuate(legs, sleep=0.2):
     for leg in legs:
         for joint in leg.joints:
