@@ -8,9 +8,9 @@ boards = [ServoKit(channels=16, address=0x40), ServoKit(channels=16, address=0x4
 def setup(legs):
     for leg in legs:
         for joint in leg.joints:
-            boards[joint.board].servo[joint.channel].set_pulse_width_range(
-                joint.minPulse, joint.maxPulse
-            )
+            servo = boards[joint.board].servo[joint.channel]
+            servo.actuation_range = joint.actuationRange
+            servo.set_pulse_width_range(joint.minPulse, joint.maxPulse)
 
 
 def actuate(legs, sleep=0.2):
