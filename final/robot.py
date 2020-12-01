@@ -12,7 +12,7 @@ class Robot:
         self.legsEven = [self.legs[1], self.legs[3], self.legs[5]]
         setup(self.legs)
 
-    def __walk(self, angle, direction):
+    def __walk(self, angle, direction, runtime):
         self.walkTick += 1
 
         moveLegs = self.legsOdd if self.walkTick % 2 == 0 else self.legsEven
@@ -21,32 +21,30 @@ class Robot:
         # Raise
         for leg in moveLegs:
             leg.knee.addAngle(-angle)
-        actuate(moveLegs)
+        actuate(moveLegs, runtime=runtime)
 
         # Forward
-        for i in range(angle + 1):
-            for leg in moveLegs:
-                leg.shoulder.addAngle(direction)
+        for leg in moveLegs:
+            leg.shoulder.addAngle(angle)
 
-            for leg in standLegs:
-                leg.shoulder.addAngle(-direction)
+        for leg in standLegs:
+            leg.shoulder.addAngle(-angle)
 
-            actuate(self.legs, sleep=0.05)
+        actuate(self.legs, runtime=runtime)
 
         # Lower
         for leg in moveLegs:
-            leg.knee.addAngle(10)
-        actuate(moveLegs)
+            leg.knee.addAngle(angle)
+        actuate(moveLegs, runtime=runtime)
 
-    def __turn(self, angle, direction):
+    def __turn(self, angle, direction, runtime):
         self.turnTick += 1
 
         # Re-orient body
         if self.turnTick % 3 == 0:
-            for i in range(angle + 1):
-                for leg in self.legs:
-                    leg.shoulder.addAngle(-direction, ignoreInverted=True)
-                actuate(self.legs, sleep=0.05)
+            for leg in self.legs:
+                leg.shoulder.addAngle(angle*-direction, ignoreInverted=True)
+            actuate(self.legs, runtime=runtime)
 
         # Move the legs
         else:
@@ -54,55 +52,60 @@ class Robot:
 
             for leg in moveLegs:
                 leg.knee.addAngle(-angle)
-            actuate(moveLegs)
+            actuate(moveLegs, runtime=runtime)
 
-            for i in range(angle + 1):
-                for leg in moveLegs:
-                    leg.shoulder.addAngle(direction, ignoreInverted=True)
-                actuate(self.legs, sleep=0.05)
+            for leg in moveLegs:
+                leg.shoulder.addAngle(angle*direction, ignoreInverted=True)
+            actuate(self.legs, runtime=runtime)
 
             for leg in moveLegs:
                 leg.knee.addAngle(angle)
-            actuate(moveLegs)
+            actuate(moveLegs, runtime=runtime)
 
-    def __changeHeight(self, targetKnee, targetFoot):
-        steps = 10
-        diffKnee = (targetKnee - self.currKnee) / steps
-        diffFoot = (targetFoot - self.currFoot) / steps
-        for i in range(steps):
-            self.stand(knee=self.currKnee + diffKnee, foot=self.currFoot + diffFoot)
-            actuate(self.legs, sleep=0.01)
+    def forward(self, angle=15, runtime=0.03):
+        for i in range(2):
+            self.__walk(angle, 1, runtime=runtime)
 
-    def forward(self, angle=10):
-        self.__walk(angle, 1)
+    def backward(self, angle=15, runtime=0.03):
+        for i in range(2):
+            self.__walk(angle, -1, runtime=runtime)
 
-    def backward(self, angle=10):
-        self.__walk(angle, -1)
+    def turnRight(self, angle=15, runtime=0.05):
+        for i in range(3):
+            self.__turn(angle, direction=-1, runtime=runtime)
 
-    def turnRight(self, angle=10):
-        self.__turn(angle, direction=-1)
-
-    def turnLeft(self, angle=10):
-        self.__turn(angle, direction=1)
+    def turnLeft(self, angle=15, runtime=0.05):
+        for i in range(3):
+            self.__turn(angle, direction=1, runtime=runtime)
 
     def goTall(self):
-        self.__changeHeight(targetKnee=130, targetFoot=70)
+        self.stand(knee=180, foot=85, runtime=0.1)
 
     def goShort(self):
-        self.__changeHeight(targetKnee=90, targetFoot=20)
+        self.stand(knee=110, foot=45, runtime=0.1)
 
     # knee: more = higher
     # foot: more = higher
-    def stand(self, shoulder=None, knee=135, foot=135):
-        self.currKnee = knee
-        self.currFoot = foot
+    def stand(self, shoulder=None, knee=135, foot=135, runtime=0.35):
+        self.currentKnee = knee
+        self.currentFoot = foot
         for leg in self.legs:
-            leg.shoulder.currAngle = shoulder or leg.shoulder.startAngle
-            leg.knee.currAngle = knee
-            leg.foot.currAngle = foot
-        actuate(self.legs)
+            leg.shoulder.targetAngle = shoulder or leg.shoulder.startAngle
+            leg.knee.targetAngle = knee
+            leg.foot.targetAngle = foot
+        actuate(self.legs, runtime=runtime)
 
 
 if __name__ == "__main__":
+    import time
     robot = Robot()
-    robot.stand()
+    robot.stand(runtime=0.1)
+    time.sleep(0.1)
+    robot.stand(knee=155, foot=65, runtime=0.060)
+
+    def demo(sleeptime=0.5):
+        for i in range(5):
+            robot.stand(knee=115, runtime=0.065)
+            time.sleep(sleeptime)
+            robot.stand(knee=185, runtime=0.065)
+            time.sleep(sleeptime)

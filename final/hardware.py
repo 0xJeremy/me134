@@ -29,27 +29,27 @@ class Joint:
 
     def addAngle(self, angle, ignoreInverted=False):
         inverted = False if ignoreInverted else self.inverted
-        self.currAngle += angle if not inverted else -angle
+        self.targetAngle += angle if not inverted else -angle
 
 
-JOINT1 = Joint(0, 0, 600, 2500, 270, 135)
-JOINT2 = Joint(0, 1, 650, 2500, 270, 135)
-JOINT3 = Joint(0, 2, 425, 2500, 180, 90)
-JOINT4 = Joint(0, 3, 650, 2500, 270, 135)
-JOINT5 = Joint(0, 4, 550, 2500, 270, 135)
-JOINT6 = Joint(0, 5, 550, 2500, 180, 90)
-JOINT7 = Joint(0, 6, 550, 2500, 270, 135)
-JOINT8 = Joint(0, 7, 600, 2500, 270, 135)
-JOINT9 = Joint(0, 8, 700, 2500, 180, 90)
-JOINT10 = Joint(1, 0, 600, 2500, 270, 135)
-JOINT11 = Joint(1, 1, 625, 2500, 270, 135)
-JOINT12 = Joint(1, 2, 650, 2600, 180, 90, inverted=True)
-JOINT13 = Joint(1, 3, 500, 2500, 270, 135)
-JOINT14 = Joint(1, 4, 650, 2500, 270, 135)
-JOINT15 = Joint(1, 5, 500, 2500, 180, 90, inverted=True)
-JOINT16 = Joint(1, 6, 500, 2500, 270, 135)
-JOINT17 = Joint(1, 7, 500, 2500, 270, 135)
-JOINT18 = Joint(1, 8, 575, 2500, 180, 90, inverted=True)
+JOINT1 = Joint(0, 0, 600, 2500, 270, 135, 45, 145)
+JOINT2 = Joint(0, 1, 650, 2500, 270, 135, 75, 225)
+JOINT3 = Joint(0, 2, 425, 2500, 180, 90, 30, 115)
+JOINT4 = Joint(0, 3, 650, 2500, 270, 135, 45, 145)
+JOINT5 = Joint(0, 4, 550, 2500, 270, 135, 75, 225)
+JOINT6 = Joint(0, 5, 550, 2500, 180, 90, 65, 115)
+JOINT7 = Joint(0, 6, 550, 2500, 270, 135, 45, 145)
+JOINT8 = Joint(0, 7, 600, 2500, 270, 135, 75, 225)
+JOINT9 = Joint(0, 8, 700, 2500, 180, 90, 65, 150)
+JOINT10 = Joint(1, 0, 600, 2500, 270, 135, 45, 145)
+JOINT11 = Joint(1, 1, 625, 2500, 270, 135, 75, 225)
+JOINT12 = Joint(1, 2, 650, 2600, 180, 90, 65, 150, inverted=True)
+JOINT13 = Joint(1, 3, 500, 2500, 270, 135, 45, 145)
+JOINT14 = Joint(1, 4, 650, 2500, 270, 135, 75, 225)
+JOINT15 = Joint(1, 5, 500, 2500, 180, 90, 65, 115, inverted=True)
+JOINT16 = Joint(1, 6, 500, 2500, 270, 135, 45, 145)
+JOINT17 = Joint(1, 7, 500, 2500, 270, 135, 75, 225)
+JOINT18 = Joint(1, 8, 575, 2500, 180, 90, 30, 115, inverted=True)
 
 
 class Leg:

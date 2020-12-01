@@ -1,4 +1,4 @@
-from interpolation import generatePoints
+from interpolator import generatePoints
 
 try:
     from adafruit_servokit import ServoKit
@@ -47,15 +47,16 @@ try:
         return sleepTime
 
     def __performActuation(legs, sleepTime):
-        for i in range(numInterpolationPoints):
+        for i in range(numInterpolationPoints - 1):
             for leg in legs:
                 for joint in leg.joints:
                     boards[joint.board].servo[
                         joint.channel
-                    ].angle = joint.interpolatedPoints.pop(0)
+                    ].angle = joint.interpolatedPoints[i]
+                    joint.currentAngle = joint.interpolatedPoints[i]
                 time.sleep(sleepTime)
 
-    def actuate(legs, runtime=0.5):
+    def actuate(legs, runtime=0.35):
         __validateMotionPlan(legs)
         sleepTime = __generateActuationPlan(legs, runtime=runtime)
         __performActuation(legs, sleepTime)
