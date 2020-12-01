@@ -7,6 +7,8 @@ class Joint:
         maxPulse,
         actuationRange,
         startAngle,
+        minAngle=None,
+        maxAngle=None,
         inverted=False,
     ):
         self.board = board
@@ -14,16 +16,20 @@ class Joint:
         self.minPulse = minPulse
         self.maxPulse = maxPulse
         self.startAngle = startAngle
-        self.currAngle = self.startAngle
+        self.minAngle = minAngle
+        self.maxAngle = maxAngle
+
+        self.currentAngle = self.startAngle
+        self.targetAngle = None
         self.actuationRange = actuationRange
+
         self.inverted = inverted
+
+        self.interpolatedPoints = []
 
     def addAngle(self, angle, ignoreInverted=False):
         inverted = False if ignoreInverted else self.inverted
-        if inverted:
-            self.currAngle -= angle
-        else:
-            self.currAngle += angle
+        self.currAngle += angle if not inverted else -angle
 
 
 JOINT1 = Joint(0, 0, 600, 2500, 270, 135)
