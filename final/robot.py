@@ -43,7 +43,7 @@ class Robot:
         # Re-orient body
         if self.turnTick % 3 == 0:
             for leg in self.legs:
-                leg.shoulder.addAngle(angle*-direction, ignoreInverted=True)
+                leg.shoulder.addAngle(angle * -direction, ignoreInverted=True)
             actuate(self.legs, runtime=runtime)
 
         # Move the legs
@@ -55,7 +55,7 @@ class Robot:
             actuate(moveLegs, runtime=runtime)
 
             for leg in moveLegs:
-                leg.shoulder.addAngle(angle*direction, ignoreInverted=True)
+                leg.shoulder.addAngle(angle * direction, ignoreInverted=True)
             actuate(self.legs, runtime=runtime)
 
             for leg in moveLegs:
@@ -98,6 +98,7 @@ class Robot:
 
 if __name__ == "__main__":
     import time
+
     robot = Robot()
     robot.stand(runtime=0.1)
     time.sleep(0.1)
