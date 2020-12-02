@@ -14,8 +14,7 @@ class Publisher:
         self.publisher.bind("tcp://{}:{}".format(address, port))
 
     def sendImage(self, image):
-        encodedImage = base64.b64encode(cv2.imencode(".png", image)[1])
-        self.publisher.send(TOPIC + encodedImage)
+        self.publisher.send(TOPIC + base64.b64encode(cv2.imencode(".png", image)[1]))
 
 
 if __name__ == "__main__":
