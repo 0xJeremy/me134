@@ -1,6 +1,8 @@
 from actuation import setup, actuate
 import time
 from hardware import LEGS
+import sensing
+#import camera
 
 
 class Robot:
@@ -10,6 +12,10 @@ class Robot:
         self.turnTick = 0
         self.legsOdd = [self.legs[0], self.legs[2], self.legs[4]]
         self.legsEven = [self.legs[1], self.legs[3], self.legs[5]]
+        self.legsFront = [self.legs[0], self.legs[3]]
+        self.legsBack = [self.legs[2], self.legs[5]]
+        self.legsRight = [self.legs[0], self.legs[1], self.legs[2]]
+        self.legsLeft = [self.legs[3], self.legs[4], self.legs[5]]
         setup(self.legs)
 
     def __walk(self, angle, direction, runtime):
@@ -35,7 +41,41 @@ class Robot:
         # Lower
         for leg in moveLegs:
             leg.knee.addAngle(angle)
-        actuate(moveLegs, runtime=runtime)
+            actuate(moveLegs, runtime=runtime)
+
+    def __walkSide(self, angle, direction,runtime,side):
+        self.walkTick += 1
+
+        moveLegs = self.legsOdd if self.walkTick % 2 == 0 else self.legsEven
+        standLegs = self.legsEven if self.walkTick % 2 == 0 else self.legsOdd
+
+        # Raise
+        for leg in moveLegs:
+            leg.knee.addAngle(-angle)
+        actuate(moveLegs,runtime=runtime)
+
+        # Right
+        if side=='right':
+            for leg in moveLegs:
+                leg.foot.addAngle(-angle)
+
+            for leg in standLegs:
+                leg.foot.addAngle(angle)
+            actuate(self.legs, runtime=runtime)
+
+        # Left
+        elif side=='left':
+            for leg in moveLegs:
+                leg.foot.addAngle(angle)
+
+            for leg in standLegs:
+                leg.foot.addAngle(-angle)
+            actuate(self.legs, runtime=runtime)
+
+        # Lower
+        for leg in moveLegs:
+            leg.knee.addAngle(10)
+        actuate(moveLegs,runtime=runtime)
 
     def __turn(self, angle, direction, runtime):
         self.turnTick += 1
@@ -61,10 +101,37 @@ class Robot:
             for leg in moveLegs:
                 leg.knee.addAngle(angle)
             actuate(moveLegs, runtime=runtime)
+    def __balance(self):
+        roll=sensing.getAbsoluteOrientation()[1]/2.0 #about y-axix
+        pitch=sensing.getAbsoluteOrientation()[2]/2.0 #about x-axis
+        if roll<5 and pitch<5: # minor tilt that won't affect the walking mechanism
+            pass
+        if roll>0: # tilt to the right
+            self.legsRight.knee.addAngle(roll)
+            self.legsLeft.knee.addAngle(-roll)
+        else:
+            self.legsRight.knee.addAngle(-roll)
+            self.legsLeft.knee.addAngle(roll)
+        if pitch>0: # tilt to the back
+            self.legsBack.knee.addAngle(pitch)
+            self.legsFront.knee.addAngle(-pitch)
+        else:
+            self.legsBack.knee.addAngle(-pitch)
+            self.legsFront.knee.addAngle(pitch)
 
     def forward(self, angle=15, runtime=0.03):
         for i in range(2):
             self.__walk(angle, 1, runtime=runtime)
+
+            # walking mechanism
+            # dir=camera.direciton() # returns straight,obstacle or left/right sidewalking
+            # if dir=='straight':
+            #     self.__walk(angle, 1,runtime=runtime)
+            # elif dir=='obstacle':
+            #     self.__walk(angle*2,1,runtime=runtime)
+            #     self.__balance()
+            # else:
+            #     self.__walkSide(angle,1,runtime=runtimedir)
 
     def backward(self, angle=15, runtime=0.03):
         for i in range(2):
@@ -83,6 +150,7 @@ class Robot:
 
     def goShort(self):
         self.stand(knee=110, foot=45, runtime=0.1)
+
 
     # knee: more = higher
     # foot: more = higher
