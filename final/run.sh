@@ -1,3 +1,2 @@
 # Allows pygame to run without a display
-export DISPLAY=:0
-python3 main.py
+DISPLAY=0:0; sudo python3 main.py
