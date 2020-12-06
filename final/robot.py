@@ -10,6 +10,11 @@ class Robot:
         self.turnTick = 0
         self.legsOdd = [self.legs[0], self.legs[2], self.legs[4]]
         self.legsEven = [self.legs[1], self.legs[3], self.legs[5]]
+        self.legsFront = [self.legs[0], self.legs[3]]
+        self.legsMiddle = [self.legs[1], self.legs[4]]
+        self.legsBack = [self.legs[2], self.legs[5]]
+        self.legsRight = [self.legs[0], self.legs[1], self.legs[2]]
+        self.legsLeft = [self.legs[3], self.legs[4], self.legs[5]]
         setup(self.legs)
         self.forwardCount = 0
         self.forwardTallCount = 0
@@ -124,6 +129,102 @@ class Robot:
     def goShort(self):
         self.stand(knee=90, foot=0, runtime=0.1)
         self.isTall = False
+        
+    def __adjust(self,angle,direction,runtime=0.03):
+
+        if direction==0: #body facing right
+            # front legs (leg 0 and leg 3) need to move to the left, and back legs(leg2 and leg 5) need to move to the right
+            # leg 0 need to add positive foot angle to move to the left,
+            # leg 3 need to add neg foot angle to move to the left
+
+            # leg 2 need to add negative foot angle to move to the right,
+            # leg 5 need to add positive foot angle to move to the right.
+            setA = [self.legs[0], self.legs[5]]
+            setB = [self.legs[3], self.legs[2]]
+
+        else:
+            setB = [self.legs[0], self.legs[5]]
+            setA = [self.legs[3], self.legs[2]]
+        #raise
+        for leg in setA:
+            leg.knee.addAngle(-10)
+        actuate(setA, runtime=runtime)
+
+        #stretch
+        for leg in setA:
+            leg.foot.addAngle(angle)
+        actuate(setA, runtime=runtime)
+
+        #lower
+        for leg in setA:
+            leg.knee.addAngle(10)
+        actuate(setA, runtime=runtime)
+
+        #reset
+        for leg in setA:
+            leg.foot.addAngle(-angle)
+        actuate(setA, runtime=runtime)
+
+        #raise
+        for leg in setB:
+            leg.knee.addAngle(-10)
+        actuate(setB, runtime=runtime)
+
+        #fold
+        for leg in setB:
+            leg.foot.addAngle(-angle)
+        actuate(setA, runtime=runtime)
+
+        #lower
+        for leg in setB:
+            leg.knee.addAngle(10)
+        actuate(setB, runtime=runtime)
+
+        #reset
+        for leg in setB:
+            leg.foot.addAngle(angle)
+        actuate(setB, runtime=runtime)
+        
+    def __balance(self,runtime=0.03):
+        heading=sensing.getAbsoluteOrientation()[0]/2.0 #about z-axis
+        roll=sensing.getAbsoluteOrientation()[1]/2.0 #about y-axix
+        pitch=sensing.getAbsoluteOrientation()[2]/2.0 #about x-axis
+
+        thresh=5
+
+        if math.abs(heading)>thresh:
+            if heading>0:
+                self.__adjust(heading,0)
+            else:
+                self.__adjust(heading,1)
+        if math.abs(roll)>thresh: # tilt to the right
+            for leg in legsRight:
+                self.leg.knee.addAngle(roll)
+            for leg in legsLeft:
+                self.leg.knee.addAngle(-roll)
+            actuate(self.legs,runtime=runtime)
+        else:
+            for leg in legsRight:
+                self.leg.knee.addAngle(-roll)
+            for leg in legsLeft:
+                self.leg.knee.addAngle(roll)
+            actuate(self.legs, runtime=runtime)
+        if math.abs(pitch)>thresh: # tilt to the back
+            for leg in legsBack:
+                self.leg.knee.addAngle(pitch)
+            for leg in legsFront:
+                self.leg.knee.addAngle(-pitch)
+            actuate(self.legs, runtime=runtime)
+        else:
+            for leg in legsBack:
+                self.leg.knee.addAngle(-pitch)
+            for leg in legsFront:
+                self.leg.knee.addAngle(pitch)
+            actuate(self.legs, runtime=runtime)
+    
+    def debris(self):
+        self.__walk(angle * 2, 1, runtime=runtime)
+        self.__balance()
 
     # knee: more = higher
     # foot: more = higher
