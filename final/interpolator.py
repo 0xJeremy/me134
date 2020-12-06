@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     plt.plot(x, y, label="Sigmoid")
     plt.scatter(x[1:], angles, color="orange", label="Command Points")
-    plt.xlabel("Time(?)")
+    plt.xlabel("Time")
     plt.ylabel("Command Angle")
     plt.legend()
 

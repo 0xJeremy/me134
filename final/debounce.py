@@ -8,5 +8,5 @@ def debounce(fn, minTime):
     lastCalled = timers.get(fn, None)
     if lastCalled is not None and (now - lastCalled) < minTime:
         return
-    timers[fn] = now
     fn()
+    timers[fn] = now
