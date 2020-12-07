@@ -12,7 +12,6 @@ class Robot:
         self.legsEven = [self.legs[1], self.legs[3], self.legs[5]]
         setup(self.legs)
         self.forwardCount = 0
-        self.forwardTallCount = 0
         self.isTall = False
 
     def __walk(self, raiseAngle, turnAngle, direction, runtime):
@@ -46,6 +45,47 @@ class Robot:
         for leg in moveLegs:
             leg.knee.addAngle(stopOffset)
         actuate(moveLegs, runtime=runtime)
+
+    def raiseLegPair(self, pairNumber):
+        legPair = [pairNumber, pairNumber+3]
+
+        for leg in legPair:
+            self.leg(leg, knee=115, foot=20)
+            self.leg(leg, knee=135, foot=135)
+            # self.leg(leg, knee=135, foot=135)
+
+            if leg == 0 or leg == 5:
+                self.leg(leg, shoulder=30)
+
+            if leg == 2 or leg == 3:
+                self.leg(leg, shoulder=150)
+
+    def wallWalk(self, pairRaised, raiseAngle=34, turnAngle=14, runtime=0.07):
+        legSequence = {
+            0: [self.legs[1], self.legs[5], self.legs[2], self.legs[4]],
+            1: [self.legs[0], self.legs[5], self.legs[2], self.legs[3]],
+            2: [self.legs[0], self.legs[4], self.legs[1], self.legs[3]],
+        }[pairRaised]
+
+        for i in range(2):
+            for leg in legSequence:
+                # Raise leg
+                leg.knee.addAngle(-raiseAngle)
+                leg.foot.addAngle(-raiseAngle)
+                actuate([leg], runtime=runtime)
+
+                # Move forward
+                leg.shoulder.addAngle(turnAngle)
+                actuate([leg], runtime=runtime)
+
+                # Lower leg
+                leg.knee.addAngle(raiseAngle)
+                leg.foot.addAngle(raiseAngle)
+                actuate([leg], runtime=runtime)
+
+            for leg in legSequence:
+                leg.shoulder.addAngle(-turnAngle)
+                actuate([leg], runtime=runtime)
 
     def __turn(self, angle, direction, runtime):
         self.turnTick += 1
@@ -82,15 +122,9 @@ class Robot:
                 direction=-1,
                 runtime=runtime,
             )
-        if moveLegs is None and standLegs is None:
-            if not self.isTall:
-                self.forwardCount += 1
-                if self.forwardCount % 3:
-                    self.turnLeft()
-            else:
-                self.forwardTallCount += 1
-                if self.forwardTallCount % 3 == 1:
-                    self.turnLeft()
+        self.forwardCount += 1
+        if self.forwardCount % 3 == 2:
+            self.turnLeft()
 
     def backward(self, raiseAngle=34, turnAngle=14, runtime=0.03):
         for i in range(2):
@@ -100,14 +134,9 @@ class Robot:
                 direction=1,
                 runtime=runtime,
             )
-        if not self.isTall:
-            self.forwardCount += 1
-            if self.forwardCount % 3:
-                self.turnRight()
-        else:
-            self.forwardTallCount += 1
-            if self.forwardTallCount % 3 == 1:
-                self.turnRight()
+        self.forwardCount += 1
+        if self.forwardCount % 3:
+            self.turnRight()
 
     def turnRight(self, angle=20, runtime=0.05):
         for i in range(3):
@@ -136,7 +165,7 @@ class Robot:
             leg.foot.targetAngle = foot
         actuate(self.legs, runtime=runtime)
 
-    def leg(self, legNum, shoulder=None, knee=None, foot=None, runtime=0.05):
+    def leg(self, legNum, shoulder=None, knee=None, foot=None, runtime=0.05, actuation=True):
         leg = self.legs[legNum]
         if shoulder is not None:
             leg.shoulder.targetAngle = shoulder
@@ -144,7 +173,8 @@ class Robot:
             leg.knee.targetAngle = knee
         if foot is not None:
             leg.foot.targetAngle = foot
-        actuate(self.legs, runtime=runtime)
+        if actuation:
+            actuate(self.legs, runtime=runtime)
 
 
 if __name__ == "__main__":
