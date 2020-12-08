@@ -11,7 +11,7 @@ class Publisher:
     def __init__(self, address=ADDRESS, port=PORT):
         self.context = zmq.Context()
         self.publisher = self.context.socket(zmq.PUB)
-        self.publisher.setsockopt(zmq.SNDHWM, 1) # set the high water mark to 1 frame
+        self.publisher.setsockopt(zmq.SNDHWM, 1)  # set the high water mark to 1 frame
         self.publisher.bind("tcp://{}:{}".format(address, port))
 
     def sendImage(self, image):

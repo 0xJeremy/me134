@@ -1,4 +1,4 @@
-import cv2
+# import cv2
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread, Lock
@@ -22,7 +22,9 @@ class Camera:
         return self
 
     def run(self):
-        for frame in self.cam.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
+        for frame in self.cam.capture_continuous(
+            self.rawCapture, format="bgr", use_video_port=True
+        ):
             if self.stopped:
                 break
             image = frame.array
