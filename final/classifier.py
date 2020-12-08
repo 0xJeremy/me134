@@ -26,10 +26,27 @@ class Classifier:
         image = cv2.resize(image, (self.height, self.width))
         setInputTensor(self.interpreter, image)
         self.interpreter.invoke()
-        outputDetails = interpreter.get_output_details()[0]
-        output = np.squeeze(interpreter.get_tensor(outputDetails["index"]))
+        outputDetails = self.interpreter.get_output_details()[0]
+        output = np.squeeze(self.interpreter.get_tensor(outputDetails["index"]))
         if outputDetails["dtype"] == np.uint8:
             scale, zero_point = outputDetails["quantization"]
             output = scale * (output - zero_point)
         ordered = np.argpartition(-output, topK)
         return [(i, output[i]) for i in ordered[:topK]]
+
+
+if __name__ == "__main__":
+    classifier = Classifier()
+
+    cam = cv2.VideoCapture(2)
+
+    while True:
+        ret, frame = cam.read()
+        results = classifier.classify(frame)
+        print(results)
+        cv2.imshow("Frame", frame)
+        key = cv2.waitKey(100) & 0xFF
+        if key == ord("q"):
+            break
+
+    cam.release()

@@ -1,0 +1,4 @@
+0 Debris
+1 Wall
+2 Tunnel
+3 Junk
