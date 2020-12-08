@@ -46,19 +46,22 @@ class Robot:
             leg.knee.addAngle(stopOffset)
         actuate(moveLegs, runtime=runtime)
 
-    def raiseLegPair(self, pairNumber):
-        legPair = [pairNumber, pairNumber+3]
+    def raiseLegPair(self, pairNumber, actuation=True):
+        legPair = [pairNumber, pairNumber + 3]
 
         for leg in legPair:
-            self.leg(leg, knee=115, foot=20)
-            self.leg(leg, knee=135, foot=135)
+            self.leg(leg, knee=115, foot=20, actuation=actuation)
+            self.leg(leg, knee=135, foot=135, actuation=actuation)
             # self.leg(leg, knee=135, foot=135)
 
             if leg == 0 or leg == 5:
-                self.leg(leg, shoulder=30)
+                self.leg(leg, shoulder=30, actuation=actuation)
 
             if leg == 2 or leg == 3:
-                self.leg(leg, shoulder=150)
+                self.leg(leg, shoulder=150, actuation=actuation)
+
+        if not actuation:
+            actuate(self.legs)
 
     def wallWalk(self, pairRaised, raiseAngle=34, turnAngle=14, runtime=0.07):
         legSequence = {
@@ -165,7 +168,9 @@ class Robot:
             leg.foot.targetAngle = foot
         actuate(self.legs, runtime=runtime)
 
-    def leg(self, legNum, shoulder=None, knee=None, foot=None, runtime=0.05, actuation=True):
+    def leg(
+        self, legNum, shoulder=None, knee=None, foot=None, runtime=0.05, actuation=True
+    ):
         leg = self.legs[legNum]
         if shoulder is not None:
             leg.shoulder.targetAngle = shoulder

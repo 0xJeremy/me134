@@ -2,6 +2,7 @@
 
 from xbox_controller import XboxController
 from debounce import debounce
+from routines import wall
 from robot import Robot
 import time
 
@@ -11,32 +12,49 @@ raiseLowerTimeout = 0.5
 
 def main():
     robot = Robot()
-    controller = XboxController()
 
     def forward(value):
-        debounce(robot.forward, moveTimeout)
+        if value:
+            print("Forward!")
+            robot.forward()
 
     def backward(value):
-        debounce(robot.backward, moveTimeout)
+        if value:
+            print("Backward!")
+            robot.backward()
 
     def turnLeft(value):
-        debounce(robot.turnLeft, moveTimeout)
+        if value:
+            print("Turn Left!")
+            robot.turnLeft()
 
     def turnRight(value):
-        debounce(robot.turnRight, moveTimeout)
+        if value:
+            print("Turn Right!")
+            robot.turnRight()
 
-    def up(value):
-        debounce(robot.up, raiseLowerTimeout)
+    def controlCallBack(xboxControlId, value):
+        if value == 0:
+            return
+        if xboxControlId == 13: # right bumper
+            print("Go tall")
+            robot.goTall()
+        elif xboxControlId == 12: # left bumper
+            print("Go short")
+            robot.goShort()
 
-    def down(value):
-        debounce(robot.down, raiseLowerTimeout)
+        elif xboxControlId == 4 and value == 1: # right trigger, full decompress
+            print("Run Autonomous Wall!")
+            wall(robot)
+        elif xboxControlId == 5 and value == 1: # left trigger, full decompress
+            print("Run Autonomous Debris")
+        # print("Control Id = {}, Value = {}".format(xboxControlId, value))
 
-    controller.setupControlCallback(controller.XboxControls.Y, forward)
+    controller = XboxController(controlCallBack)
+    controller.setupControlCallback(controller.XboxControls.Y, turnLeft) # actually button X
     controller.setupControlCallback(controller.XboxControls.A, backward)
-    controller.setupControlCallback(controller.XboxControls.X, turnLeft)
     controller.setupControlCallback(controller.XboxControls.B, turnRight)
-    controller.setupControlCallback(controller.XboxControls.RTRIGGER, up)
-    controller.setupControlCallback(controller.XboxControls.LTRIGGER, down)
+    controller.setupControlCallback(controller.XboxControls.LB, forward) # actually Y button
 
     controller.start()
     robot.stand(knee=155, foot=65, runtime=0.060)

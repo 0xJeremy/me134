@@ -1,5 +1,6 @@
 import time
 
+
 def swimFrontLegs(robot):
     robot.leg(0, knee=176, foot=101)
     robot.leg(0, shoulder=30)
@@ -11,6 +12,7 @@ def swimFrontLegs(robot):
 
     robot.leg(0, shoulder=90, actuation=False)
     robot.leg(3, shoulder=90)
+
 
 def swimBackLegs(robot):
     robot.leg(2, shoulder=150, actuation=False)
@@ -27,33 +29,41 @@ def swimBackLegs(robot):
     robot.leg(2, shoulder=150, actuation=False)
     robot.leg(5, shoulder=30)
 
+
 def frontLegsForward(robot):
     robot.leg(0, shoulder=30, actuation=False)
     robot.leg(3, shoulder=150)
+
 
 def frontLegsBack(robot):
     robot.leg(0, shoulder=90, actuation=False)
     robot.leg(3, shoulder=90)
 
+
 def raiseFrontLegs(robot):
     robot.leg(0, knee=176, foot=101, actuation=False)
     robot.leg(3, knee=176, foot=101)
+
 
 def lowerFrontLegs(robot):
     robot.leg(0, knee=210, foot=115, actuation=False)
     robot.leg(3, knee=210, foot=115)
 
+
 def backLegsBack(robot):
     robot.leg(2, shoulder=150, actuation=False)
     robot.leg(5, shoulder=30)
+
 
 def backLegsForward(robot):
     robot.leg(2, shoulder=90, actuation=False)
     robot.leg(5, shoulder=90)
 
+
 def raiseBackLegs(robot):
     robot.leg(2, knee=176, foot=101, actuation=False)
     robot.leg(5, knee=176, foot=101)
+
 
 def lowerBackLegs(robot):
     robot.leg(0, knee=210, foot=115, actuation=False)
@@ -62,6 +72,7 @@ def lowerBackLegs(robot):
 
 def walkTall(robot):
     pass
+
 
 def wall(robot):
     robot.goTall()
@@ -82,12 +93,29 @@ def wall(robot):
     robot.leg(2, shoulder=150, actuation=False)
     robot.leg(5, shoulder=30)
 
-    swimFrontLegs(robot)
-    swimBackLegs(robot)
+    frontLegsForward(robot)
+    backLegsBack(robot)
+
+    # move middle legs forward
+    robot.leg(1, shoulder=60)
+    robot.leg(4, shoulder=130)
+
+    # splay front legs
+    robot.leg(0, knee=__, foot=__, actuation=False)
+    robot.leg(3, knee=__, foot=__)
+
+    # plant middle legs
+    robot.leg(1, knee=210, foot=115, actuation=False)
+    robot.leg(4, knee=210, foot=115, actuation=False)
+
+    # raise back legs
+    robot.raiseLegPair(2, actuation=actuation)
+
+    # swimFrontLegs(robot)
+    # swimBackLegs(robot)
 
     # robot.leg(0, shoulder=30, actuation=False)
     # robot.leg(3, shoulder=150)
-
 
     # Move middle legs forward
     # robot.leg(1, shoulder=70, actuation=False)
