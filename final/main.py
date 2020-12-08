@@ -4,6 +4,8 @@ from xbox_controller import XboxController
 from debounce import debounce
 from routines import wall
 from robot import Robot
+from camera import Camera
+from publisher import Publisher
 import time
 
 moveTimeout = 1
@@ -56,9 +58,14 @@ def main():
     controller.setupControlCallback(controller.XboxControls.B, turnRight)
     controller.setupControlCallback(controller.XboxControls.LB, forward) # actually Y button
 
+    publisher = Publisher()
+    camera = Camera(callback=publisher.sendImage).start()
+
     controller.start()
     robot.stand(knee=155, foot=65, runtime=0.060)
     print("Ready!")
+
+    
     try:
         while True:
             time.sleep(5)
@@ -66,6 +73,7 @@ def main():
         print("Closing program...")
     finally:
         controller.stop()
+        camera.stop()
 
 
 if __name__ == "__main__":

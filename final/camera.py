@@ -1,10 +1,16 @@
 import cv2
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 from threading import Thread, Lock
 
 
 class Camera:
-    def __init__(self, camera=0, size=(640, 480), callback=None):
-        self.cam = cv2.VideoCapture(camera)
+    def __init__(self, size=(480, 368), callback=None):
+        # self.cam = cv2.VideoCapture(camera)
+        self.cam = PiCamera()
+        self.cam.resolution = size
+        self.cam.framerate = 24
+        self.rawCapture = PiRGBArray(self.cam, size=size)
         self.stopped = False
         self.safeFrame = None
         self.size = size
@@ -16,12 +22,21 @@ class Camera:
         return self
 
     def run(self):
-        while not self.stopped:
-            ret, frame = self.cam.read()
+        for frame in self.cam.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
+            if self.stopped:
+                break
+            image = frame.array
             with self.lock:
-                self.safeFrame = cv2.resize(frame, self.size)
+                self.safeFrame = image
             if self.callback is not None:
                 self.callback(self.safeFrame)
+            self.rawCapture.truncate(0)
+        # while not self.stopped:
+        #     ret, frame = self.cam.read()
+        #     with self.lock:
+        #         self.safeFrame = cv2.resize(frame, self.size)
+        #     if self.callback is not None:
+        #         self.callback(self.safeFrame)
 
     def stop(self):
         self.stopped = True

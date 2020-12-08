@@ -3,7 +3,7 @@ import cv2
 import base64
 import numpy as np
 
-ADDRESS = "127.0.0.1"
+ADDRESS = "172.20.10.2"
 PORT = 8484
 TOPIC = "\0\0\0"
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     while True:
         image = subscriber.recv()
-        cv2.imshow("Frame", image)
+        cv2.imshow("Frame", cv2.flip(image, -1))
         key = cv2.waitKey(100) & 0xFF
         if key == ord("q"):
             break
