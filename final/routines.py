@@ -79,7 +79,7 @@ def wall(robot):
 
     # Raise front legs and brace on wall
     robot.raiseLegPair(0)
-    time.sleep(1)
+    time.sleep(0.5)
     robot.raiseLegPair(1)
     for leg in [0, 3]:
         robot.leg(leg, knee=210, foot=115)
@@ -93,23 +93,111 @@ def wall(robot):
     robot.leg(2, shoulder=150, actuation=False)
     robot.leg(5, shoulder=30)
 
-    frontLegsForward(robot)
-    backLegsBack(robot)
+    # frontLegsForward(robot)
+    # backLegsBack(robot)
 
     # move middle legs forward
-    robot.leg(1, shoulder=60)
-    robot.leg(4, shoulder=130)
+    robot.leg(1, shoulder=80)
+    robot.leg(4, shoulder=120)
+
+    backLegsBack(robot)
+
+    robot.wallWalkMiddle()
+
+    # place middle right leg
+    robot.leg(1, knee=115, foot=20)
+    robot.leg(1, knee=210, foot=115, actuation=False)
+    robot.leg(1, shoulder=90, actuation=False)
+
+    # raise back right
+    robot.leg(2, knee=115, foot=20)
+    robot.leg(2, knee=135, foot=135)
+    robot.leg(2, shoulder=150)
+
+    # robot.leg(0, foot=155, actuation=False)
+    # robot.leg(3, foot=155, actuation=False)
+    # robot.leg(1, foot=155)
+    # robot.leg(1, shoulder=110)
+
+
+    # place middle left leg
+    robot.leg(4, knee=115, foot=20)
+    robot.leg(4, knee=210, foot=115)
+    robot.leg(4, shoulder=90)
+
+    # raise back left
+    robot.leg(5, knee=115, foot=20)
+    robot.leg(5, knee=135, foot=135)
+    robot.leg(5, shoulder=30)
+
+    # push middle legs back against wall
+    robot.leg(1, shoulder=105, actuation=False)
+    robot.leg(4, shoulder=80)
+
+    robot.leg(2, foot=250)
+    robot.leg(5, foot=250)
+    backLegsForward(robot)
+
+
+    frontLegsForward(robot)
+
+    robot.leg(0, foot=155, actuation=False)
+    robot.leg(3, foot=155, actuation=False)
+    robot.leg(1, foot=155, actuation=False)
+    robot.leg(4, foot=155)
+
+    # robot.leg(2, foot=135)
+    # robot.leg(2, knee=115, foot=20)
+    # robot.leg(2, knee=210, foot=115)
+
+    # robot.leg(5, foot=135)
+    # robot.leg(5, knee=115, foot=20)
+    # robot.leg(5, knee=210, foot=115)
+
+    # robot.leg(0, foot=115, actuation=False)
+    # robot.leg(3, foot=115, actuation=False)
+    # robot.leg(1, foot=115, actuation=False)
+    # robot.leg(4, foot=115)
+
+    # frontLegsBack(robot)
+
+
+    # robot.goTall()
+
+    # robot.leg(2, foot=135)
+    # while True:
+    #     robot.leg(2, foot=250, actuation=False)
+    #     robot.leg(5, foot=135)
+
+    #     robot.leg(2, foot=135, actuation=False)
+    #     robot.leg(5, foot=250)
+
+    # back right forward, down, and push off wall
+    # robot.leg(2, shoulder=70)
+    # robot.leg(2, knee=210, foot=115)
+    # robot.leg(2, shoulder=130)
+
+    # # left side goes forward
+    # robot.leg(4, shoulder=110)
+    # robot.leg(5, shoulder=125)
+    # robot.leg(5, knee=210, foot=115)
+    # robot.leg(5, shoulder=90)
+
+    # robot.wallWalkBack()
+    # robot.wallWalkBack()
+
+
 
     # splay front legs
-    robot.leg(0, knee=__, foot=__, actuation=False)
-    robot.leg(3, knee=__, foot=__)
+    # robot.leg(0, knee=180, foot=130, actuation=False)
+    # robot.leg(3, knee=180, foot=135)
 
     # plant middle legs
-    robot.leg(1, knee=210, foot=115, actuation=False)
-    robot.leg(4, knee=210, foot=115, actuation=False)
+    # robot.leg(1, knee=210, foot=115, actuation=False)
+    # robot.leg(4, knee=210, foot=115, actuation=False)
 
     # raise back legs
-    robot.raiseLegPair(2, actuation=actuation)
+    # robot.raiseLegPair(2)
 
     # swimFrontLegs(robot)
     # swimBackLegs(robot)

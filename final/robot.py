@@ -63,32 +63,53 @@ class Robot:
         if not actuation:
             actuate(self.legs)
 
-    def wallWalk(self, pairRaised, raiseAngle=34, turnAngle=14, runtime=0.07):
-        legSequence = {
-            0: [self.legs[1], self.legs[5], self.legs[2], self.legs[4]],
-            1: [self.legs[0], self.legs[5], self.legs[2], self.legs[3]],
-            2: [self.legs[0], self.legs[4], self.legs[1], self.legs[3]],
-        }[pairRaised]
+    def wallWalkMiddle(self, raiseAngle=34, turnAngle=30, runtime=0.15):
+        for i in [0, 5, 2, 3]:
+            leg = self.legs[i]
+            leg.knee.addAngle(-raiseAngle)
+            leg.foot.addAngle(-raiseAngle)
+            actuate([leg], runtime=runtime)
 
-        for i in range(2):
-            for leg in legSequence:
-                # Raise leg
-                leg.knee.addAngle(-raiseAngle)
-                leg.foot.addAngle(-raiseAngle)
-                actuate([leg], runtime=runtime)
+            leg.shoulder.addAngle(-turnAngle)
+            actuate([leg], runtime=runtime)
 
-                # Move forward
-                leg.shoulder.addAngle(turnAngle)
-                actuate([leg], runtime=runtime)
+            stopOffset = 10
+            leg.knee.addAngle(raiseAngle - stopOffset)
+            leg.foot.addAngle(raiseAngle)
+            actuate([leg], runtime=runtime)
 
-                # Lower leg
-                leg.knee.addAngle(raiseAngle)
-                leg.foot.addAngle(raiseAngle)
-                actuate([leg], runtime=runtime)
+            leg.knee.addAngle(stopOffset)
+            actuate([leg], runtime=runtime)
 
-            for leg in legSequence:
-                leg.shoulder.addAngle(-turnAngle)
-                actuate([leg], runtime=runtime)
+        for i in [0, 5, 2, 3]:
+            leg = self.legs[i]
+            leg.shoulder.addAngle(turnAngle)
+
+        actuate(self.legs, runtime=runtime)
+
+    def wallWalkBack(self, raiseAngle=34, turnAngle=12, runtime=0.15):
+        for i in [0, 4, 3, 1]:
+            leg = self.legs[i]
+            leg.knee.addAngle(-raiseAngle)
+            leg.foot.addAngle(-raiseAngle)
+            actuate([leg], runtime=runtime)
+
+            leg.shoulder.addAngle(-turnAngle)
+            actuate([leg], runtime=runtime)
+
+            stopOffset = 10
+            leg.knee.addAngle(raiseAngle - stopOffset)
+            leg.foot.addAngle(raiseAngle)
+            actuate([leg], runtime=runtime)
+
+            leg.knee.addAngle(stopOffset)
+            actuate([leg], runtime=runtime)
+
+        for i in [0, 4, 3, 1]:
+            leg = self.legs[i]
+            leg.shoulder.addAngle(turnAngle)
+
+        actuate(self.legs, runtime=runtime)
 
     def __turn(self, angle, direction, runtime):
         self.turnTick += 1

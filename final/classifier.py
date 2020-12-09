@@ -28,10 +28,9 @@ class Classifier:
         self.interpreter.invoke()
         outputDetails = self.interpreter.get_output_details()[0]
         output = np.squeeze(self.interpreter.get_tensor(outputDetails["index"]))
-        if outputDetails["dtype"] == np.uint8:
-            scale, zero_point = outputDetails["quantization"]
-            output = scale * (output - zero_point)
         ordered = np.argpartition(-output, topK)
+        # print(self.labels[ordered[0]])
+        print(ordered)
         return [(i, output[i]) for i in ordered[:topK]]
 
 
